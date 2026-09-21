@@ -1,9 +1,11 @@
 {
   "name": "BioChat",
   "short_name": "BioChat",
-  "start_url": "./",
+  "id": "/BioChat/",
+  "start_url": "./?app=08",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#071316",
   "theme_color": "#071316",
-  "description": "BioChat 0.7 — historial navegable, Hevy completo, check-out inteligente, nutrición contextual y persistencia mejorada."
+  "description": "BioChat 0.8 — Hevy estable, historial recuperado, Open Food Facts y actualización PWA mejorada."
 }

@@ -1,3 +1,6 @@
-BioChat Web 0.7
-
-Incluye migración de datos 0.3–0.6, calendario navegable, detalle de entrenamientos Hevy, check-out persistente con devolución, actividades adaptativas, nutrición contextual, alimentos guardados y actualización PWA mejorada. cloudflare-worker.js es el Worker actualizado para importar historial paginado de Hevy.
+# BioChat Web 0.8
+- Hevy via BIOCHAT_TOKEN (sin Cloudflare Access interactivo)
+- historial documentado 07–14/09 recuperado sin inventar macros/cargas
+- Open Food Facts por código de barras
+- PWA con actualización network-first y chequeo al volver a la app
+- migración acumulativa biochat03 → biochat08
