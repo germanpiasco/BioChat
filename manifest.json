@@ -1,0 +1,9 @@
+{
+  "name": "BioChat",
+  "short_name": "BioChat",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#071316",
+  "theme_color": "#071316",
+  "description": "BioChat 0.5 — seguimiento personal, progresión comparable, calendario y fotos locales."
+}
