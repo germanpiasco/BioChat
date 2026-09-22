@@ -2,10 +2,10 @@
   "name": "BioChat",
   "short_name": "BioChat",
   "id": "/BioChat/",
-  "start_url": "./?app=09",
+  "start_url": "./?app=10",
   "scope": "./",
   "display": "standalone",
   "background_color": "#071316",
   "theme_color": "#071316",
-  "description": "BioChat 0.9.1 — sincronización persistente entre Safari y acceso directo."
+  "description": "BioChat 1.0 — Hevy + importación de Apple Salud."
 }
