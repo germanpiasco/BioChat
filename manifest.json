@@ -1,11 +1,11 @@
 {
-  "name": "BioChat",
-  "short_name": "BioChat",
-  "id": "/BioChat/",
-  "start_url": "./?app=10",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#071316",
-  "theme_color": "#071316",
-  "description": "BioChat 1.1 — Hevy + importación de Apple Salud."
+  "name":"BioChat",
+  "short_name":"BioChat",
+  "id":"/BioChat/",
+  "start_url":"./?app=12",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#071316",
+  "theme_color":"#071316",
+  "description":"BioChat 1.2 — nutrición editable, objetivos claros y pasos."
 }
