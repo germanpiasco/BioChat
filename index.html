@@ -66,11 +66,11 @@ const routines={
 const foods=[
 ['milanesa',280,25,18,12],['milanesas',280,25,18,12],['puré',220,4,38,6],['pure',220,4,38,6],['huevo',78,6.3,.6,5.3],['huevos',78,6.3,.6,5.3],['banana',105,1.3,27,.4],['yogur',120,10,8,5],['yogurt',120,10,8,5],['pollo',250,46,0,6],['arroz',260,5,56,1],['fideos',330,11,65,4],['papa',190,4,43,.2],['papas',190,4,43,.2],['atún',180,39,0,2],['atun',180,39,0,2],['carne',300,35,0,18],['lomo',330,38,0,20],['palta',160,2,9,15],['helado',140,3,18,7],['vino',125,0,4,0],['naranja',62,1.2,15,.2],['avena',150,5,27,3],['leche',120,8,12,4],['queso',110,7,1,9],['pan',80,3,15,1],['tostada',80,3,15,1],['tomate',22,1,5,.2],['ensalada',80,2,12,3],['batata',180,3,42,.2],['pescado',220,38,0,7],['merluza',190,36,0,4],['lentejas',230,18,40,1],['hamburguesa',300,25,25,16],['taco',210,10,22,9],['pizza',280,12,34,11],['chocolate',210,3,22,13],['granola',180,5,30,6]
 ];
-const APP_VERSION='0.8';
+const APP_VERSION='0.9';
 function safeParse(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
 function mergeUnique(a=[],b=[],keyFn=x=>JSON.stringify(x)){let m=new Map();[...a,...b].forEach(x=>m.set(keyFn(x),x));return [...m.values()]}
 function migrateState(){
- const versions=['biochat03','biochat04','biochat05','biochat06','biochat07','biochat08'];
+ const versions=['biochat03','biochat04','biochat05','biochat06','biochat07','biochat08','biochat09'];
  let base={days:{},body:[],recovery:{},sessions:[],activities:[],goals:{protein:140,sessions:5,weight:80,waist:85},recoveryHistory:[],recipes:[],savedFoods:[],hevy:{}};
  versions.map(safeParse).filter(Boolean).forEach(old=>{
    base.days={...base.days,...(old.days||{})};
@@ -93,9 +93,28 @@ function migrateState(){
  base.dailyActivity=base.dailyActivity||{};knownActs.forEach(([d,steps,kcal,pai])=>base.dailyActivity[d]=base.dailyActivity[d]||{steps,kcal,pai});
  return base;
 }
-let state=migrateState(); localStorage.setItem('biochat08',JSON.stringify(state));
+let state=migrateState(); localStorage.setItem('biochat09',JSON.stringify(state));
+let cloudSyncBusy=false;
+function mergeCloudState(remote={},local={}){
+ const out={...remote,...local};
+ out.days={...(remote.days||{}),...(local.days||{})};
+ for(const d of Object.keys(out.days)){const rd=(remote.days||{})[d]||{},ld=(local.days||{})[d]||{};out.days[d]={...rd,...ld,meals:{...(rd.meals||{}),...(ld.meals||{})}}}
+ const mergeBy=(a=[],b=[],fn)=>{let m=new Map();a.forEach(x=>m.set(fn(x),x));b.forEach(x=>{let k=fn(x),old=m.get(k)||{};m.set(k,{...old,...x,checkout:x.checkout||old.checkout})});return [...m.values()]};
+ out.sessions=mergeBy(remote.sessions,local.sessions,x=>x.id||`${x.date}-${x.routine}`);
+ out.activities=mergeBy(remote.activities,local.activities,x=>x.id||JSON.stringify(x));
+ out.body=mergeBy(remote.body,local.body,x=>x.date);
+ out.recoveryHistory=mergeBy(remote.recoveryHistory,local.recoveryHistory,x=>x.date);
+ out.savedFoods=mergeBy(remote.savedFoods,local.savedFoods,x=>x.name);
+ out.recipes=mergeBy(remote.recipes,local.recipes,x=>x.name);
+ out.goals={...(remote.goals||{}),...(local.goals||{})};out.hevy={...(remote.hevy||{}),...(local.hevy||{})};
+ return out;
+}
+async function cloudRequest(method,body){let token=hevyToken();if(!token)return null;let r=await fetch(HEVY_API+'/state',{method,headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,cache:'no-store'});if(!r.ok)throw new Error('Cloud '+r.status);return r.status===204?null:r.json()}
+async function pullCloud(){if(cloudSyncBusy||!hevyToken())return;cloudSyncBusy=true;try{let d=await cloudRequest('GET');if(d&&d.state){state=mergeCloudState(d.state,state);localStorage.setItem('biochat09',JSON.stringify(state));render()}}catch(e){console.warn('BioChat cloud pull',e)}finally{cloudSyncBusy=false}}
+async function pushCloud(){if(cloudSyncBusy||!hevyToken())return;cloudSyncBusy=true;try{let d=await cloudRequest('GET'),merged=mergeCloudState(d&&d.state?d.state:{},state);state=merged;await cloudRequest('PUT',{state:merged,updated_at:new Date().toISOString()});localStorage.setItem('biochat09',JSON.stringify(state))}catch(e){console.warn('BioChat cloud push',e)}finally{cloudSyncBusy=false}}
+
 function key(){let d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`} function day(){if(!state.days[key()])state.days[key()]={meals:{}};return state.days[key()]}
-function persist(){localStorage.setItem('biochat08',JSON.stringify(state));render()}
+function persist(){localStorage.setItem('biochat09',JSON.stringify(state));render();pushCloud()}
 function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(p).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p));window.scrollTo(0,0)}
 function open(html){document.getElementById('panel').innerHTML=html;document.getElementById('sheet').classList.add('on')} function closeSheet(){document.getElementById('sheet').classList.remove('on')}
 function parseFood(s){let low=s.toLowerCase(),t={kcal:0,p:0,c:0,f:0},used=[];foods.forEach(x=>{if(used.some(u=>u===x[0]))return;let i=low.indexOf(x[0]);if(i>=0){let before=low.slice(Math.max(0,i-18),i),m=before.match(/(\d+)\s*(?:\w+\s*)?$/),q=m?+m[1]:1;t.kcal+=x[1]*q;t.p+=x[2]*q;t.c+=x[3]*q;t.f+=x[4]*q;used.push(x[0])}});return t}
@@ -152,7 +171,7 @@ function doImport(){let f=backup.files[0];if(!f)return;let r=new FileReader();r.
 const HEVY_API='https://biochat-hevy-api.sandiegoappsworkersdev.workers.dev';
 function hevyToken(){return localStorage.getItem('biochat_hevy_token')||''}
 function hevySettings(){open(`<h2>Conexión Hevy</h2><p class="hint">Pegá el valor de BIOCHAT_TOKEN de Cloudflare. Se guarda sólo en este dispositivo; la API key real de Hevy permanece en el Worker.</p><input id="hToken" type="password" value="${hevyToken()}" placeholder="BIOCHAT_TOKEN"><button class="primary" onclick="saveHevyToken()">Guardar conexión</button>`)}
-function saveHevyToken(){let v=document.getElementById('hToken').value.trim();if(!v)return;localStorage.setItem('biochat_hevy_token',v);closeSheet();document.getElementById('hevyStatus').textContent='Conexión configurada. Ya podés sincronizar.'}
+function saveHevyToken(){let v=document.getElementById('hToken').value.trim();if(!v){document.getElementById('hevyStatus').textContent='Ingresá el token para guardar la conexión.';return}localStorage.setItem('biochat_hevy_token',v);closeSheet();document.getElementById('hevyStatus').textContent='Conexión configurada. Sincronizando datos…';pullCloud().then(()=>{document.getElementById('hevyStatus').textContent='Conexión configurada y datos sincronizados.'})}
 function mapHevyWorkout(w){return {id:w.id,source:'hevy',date:(w.start_time||w.created_at||'').slice(0,10),routine:w.title||'Hevy',start_time:w.start_time,end_time:w.end_time,notes:w.description||'',exercises:(w.exercises||[]).map(ex=>({exercise:ex.title,templateId:ex.exercise_template_id,notes:ex.notes||'',sets:(ex.sets||[]).map(s=>({kg:s.weight_kg||0,reps:s.reps||0,rir:s.rpe==null?null:Math.max(0,10-s.rpe),rpe:s.rpe,type:s.type}))}))}}
 async function syncHevy(){let el=document.getElementById('hevyStatus'),token=hevyToken();if(!token){hevySettings();return}el.textContent='Sincronizando historial de Hevy…';try{let r=await fetch(HEVY_API+'/workouts?pages=20',{headers:{'Authorization':'Bearer '+token},cache:'no-store'});if(r.status===401){el.textContent='El BIOCHAT_TOKEN no coincide. Tocá “Configurar conexión”.';return}if(!r.ok)throw new Error('HTTP '+r.status);let data=await r.json(),incoming=(data.workouts||[]).map(mapHevyWorkout);state.sessions=state.sessions||[];let added=0,updated=0;incoming.forEach(x=>{let i=state.sessions.findIndex(y=>y.id===x.id);if(i>=0){x.checkout=state.sessions[i].checkout||x.checkout;state.sessions[i]=x;updated++}else{state.sessions.push(x);added++}});state.sessions.sort((a,b)=>(a.date||'').localeCompare(b.date||''));state.hevy={lastSync:new Date().toISOString(),count:incoming.length};persist();document.getElementById('hevyStatus').textContent=`Listo: ${added} nuevos · ${updated} actualizados · ${incoming.length} recibidos.`}catch(e){el.textContent='No se pudo sincronizar Hevy ('+e.message+'). La conexión ya no requiere iniciar sesión en Cloudflare.'}}
 function sessionDetail(id){let x=state.sessions.find(s=>String(s.id)===String(id));if(!x)return;let dur=x.start_time&&x.end_time?Math.round((new Date(x.end_time)-new Date(x.start_time))/60000):null;let vol=(x.exercises||[]).reduce((a,e)=>a+(e.sets||[]).reduce((q,z)=>q+(+z.kg||0)*(+z.reps||0),0),0);let html=`<h2>${x.routine}</h2><div class="hint">${x.date}${dur?' · '+dur+' min':''}${vol?' · '+Math.round(vol).toLocaleString('es-AR')+' kg volumen':''}</div>`;(x.exercises||[]).forEach(e=>{html+=`<div class="exercise"><b>${e.exercise}</b>`+(e.sets||[]).map((z,i)=>`<div class="listrow"><span>Serie ${i+1}</span><b>${z.kg||0} kg × ${z.reps||0}${z.rir!=null?' · RIR '+z.rir:''}</b></div>`).join('')+`</div>`});if(x.checkout)html+=`<div class="feedback"><b>✓ Check-out realizado · ${x.checkout.feel}</b><br>${x.checkout.feedback||checkoutFeedback(x)}<div class="mini">Energía ${x.checkout.energy||'—'}/10 · Dificultad ${x.checkout.difficulty||'—'}/10${x.checkout.pain?' · Molestia: '+x.checkout.pain:''}</div></div><button class="secondary" style="width:100%;margin-top:8px" onclick="checkoutSheet(${state.sessions.indexOf(x)},true)">Editar check-out</button>`;else html+=`<button class="primary" onclick="checkoutSheet(${state.sessions.indexOf(x)})">Hacer check-out</button>`;open(html)}
@@ -229,5 +248,5 @@ function openPhotoDB(){return new Promise((res,rej)=>{let q=indexedDB.open('BioC
 async function savePhoto(view,file){if(!file)return;let db=photoDB||await openPhotoDB(),tx=db.transaction('photos','readwrite');tx.objectStore('photos').put({id:key()+'-'+view,date:key(),view,file});tx.oncomplete=()=>{photoStatus.textContent=`Foto ${view} guardada localmente para ${key()}.`;}}
 openPhotoDB().catch(()=>{});
 
-render();if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js?v=08',{updateViaCache:'none'}).then(reg=>{reg.update();setInterval(()=>reg.update(),15*60*1000)});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r&&r.update())})}
+render();pullCloud();window.addEventListener('focus',pullCloud);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloud()});if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js?v=09',{updateViaCache:'none'}).then(reg=>{reg.update();setInterval(()=>reg.update(),15*60*1000)});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r&&r.update())})}
 </script></body></html>
