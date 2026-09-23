@@ -2,10 +2,10 @@
   "name":"BioChat",
   "short_name":"BioChat",
   "id":"/BioChat/",
-  "start_url":"./?app=132",
+  "start_url":"./?app=133",
   "scope":"./",
   "display":"standalone",
   "background_color":"#071316",
   "theme_color":"#071316",
-  "description":"BioChat 1.3.2 — nutrición editable, objetivos claros y pasos."
+  "description":"BioChat 1.3.3 — nutrición editable, objetivos claros y pasos."
 }
