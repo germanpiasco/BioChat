@@ -4,7 +4,7 @@
 <style>
 :root{--bg:#071316;--card:#0d1d21;--card2:#10262b;--line:#19343b;--text:#f4f7f7;--muted:#8fa5aa;--mint:#55e5b3;--cyan:#4fd7de;--orange:#ffa05d;--red:#ff6d78}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -20%,#15343a 0,#08171b 32%,#061114 75%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-button,input,select,textarea{font:inherit}.app{max-width:520px;margin:auto;min-height:100vh;padding:calc(20px + env(safe-area-inset-top)) 16px 104px}.top{display:flex;align-items:center;justify-content:space-between}.brand{font-weight:850;font-size:27px}.brand span{color:var(--mint)}.round{width:39px;height:39px;border-radius:50%;border:1px solid var(--line);background:#102126;color:white}
+button,input,select,textarea{font:inherit}.app{max-width:520px;margin:auto;min-height:100vh;padding:max(92px, calc(28px + env(safe-area-inset-top))) 16px 104px}.top{display:flex;align-items:center;justify-content:space-between}.brand{font-weight:850;font-size:27px}.brand span{color:var(--mint)}.round{width:39px;height:39px;border-radius:50%;border:1px solid var(--line);background:#102126;color:white}
 h1{font-size:28px;margin:25px 0 3px}.muted,.sub{color:var(--muted)}.sub{font-size:14px}.card{background:linear-gradient(145deg,#0e2025,#0a181c);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 10px 28px #0003}
 .hero{display:flex;gap:14px;align-items:center}.heroIcon,.qicon{width:47px;height:47px;border-radius:50%;background:#113d32;color:var(--mint);display:grid;place-items:center;font-size:21px}.eyebrow{font-size:12px;color:var(--muted)}.big{font-size:20px;font-weight:800}
 .section{display:flex;justify-content:space-between;align-items:center;margin-top:22px}.section h2{font-size:17px;margin:0}.section .link{color:var(--mint);font-size:13px}
@@ -71,7 +71,7 @@ const routines={
 const foods=[
 ['milanesa',280,25,18,12],['milanesas',280,25,18,12],['puré',220,4,38,6],['pure',220,4,38,6],['huevo',78,6.3,.6,5.3],['huevos',78,6.3,.6,5.3],['banana',105,1.3,27,.4],['yogur',120,10,8,5],['yogurt',120,10,8,5],['pollo',250,46,0,6],['arroz',260,5,56,1],['fideos',330,11,65,4],['papa',190,4,43,.2],['papas',190,4,43,.2],['atún',180,39,0,2],['atun',180,39,0,2],['carne',300,35,0,18],['lomo',330,38,0,20],['palta',160,2,9,15],['helado',140,3,18,7],['vino',125,0,4,0],['naranja',62,1.2,15,.2],['avena',150,5,27,3],['leche',120,8,12,4],['queso',110,7,1,9],['pan',80,3,15,1],['tostada',80,3,15,1],['tomate',22,1,5,.2],['ensalada',80,2,12,3],['batata',180,3,42,.2],['pescado',220,38,0,7],['merluza',190,36,0,4],['lentejas',230,18,40,1],['hamburguesa',300,25,25,16],['taco',210,10,22,9],['pizza',280,12,34,11],['chocolate',210,3,22,13],['granola',180,5,30,6]
 ];
-const APP_VERSION='1.3';
+const APP_VERSION='1.3.2';
 function safeParse(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
 function mergeUnique(a=[],b=[],keyFn=x=>JSON.stringify(x)){let m=new Map();[...a,...b].forEach(x=>m.set(keyFn(x),x));return [...m.values()]}
 function migrateState(){
@@ -120,6 +120,18 @@ function migrateState(){
  histSessions.forEach(([date,routine,summary])=>{if(!base.sessions.some(x=>x.date===date))base.sessions.push({id:'history-'+date,date,routine,summary,source:'historical',exercises:[]})});
  const sport=[['2026-09-07','Pádel',90,null,426],['2026-09-08','Pádel',90,null,525],['2026-09-09','Pádel',90,null,623],['2026-09-10','Running',29,5,400],['2026-09-13','Running',10,2,143],['2026-09-13','Caminata',30,null,null]];
  sport.forEach(([date,type,duration,distance,kcal])=>{let id='history-'+date+'-'+type+'-'+duration;if(!base.activities.some(x=>x.id===id))base.activities.push({id,date,type,duration,distance,kcal,source:'historical'})});
+ // 1.3.1: normalización defensiva para estados viejos/cloud parcialmente formados.
+ base.days=(base.days&&typeof base.days==='object')?base.days:{};
+ Object.keys(base.days).forEach(d=>{let x=base.days[d];if(!x||typeof x!=='object')base.days[d]={meals:{}};else x.meals=(x.meals&&typeof x.meals==='object')?x.meals:{}});
+ const cleanNamed=a=>(Array.isArray(a)?a:[]).filter(x=>x&&typeof x==='object'&&typeof x.name==='string'&&x.name.trim()).map(x=>({...x,kcal:Number(x.kcal)||0,p:Number(x.p)||0,c:Number(x.c)||0,f:Number(x.f)||0,aliases:Array.isArray(x.aliases)?x.aliases:[]}));
+ base.recipes=cleanNamed(base.recipes); base.savedFoods=cleanNamed(base.savedFoods);
+ base.sessions=(Array.isArray(base.sessions)?base.sessions:[]).filter(x=>x&&typeof x==='object');
+ base.activities=(Array.isArray(base.activities)?base.activities:[]).filter(x=>x&&typeof x==='object');
+ base.body=(Array.isArray(base.body)?base.body:[]).filter(x=>x&&typeof x==='object').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+ base.recoveryHistory=(Array.isArray(base.recoveryHistory)?base.recoveryHistory:[]).filter(x=>x&&typeof x==='object').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+ base.dailyActivity=(base.dailyActivity&&typeof base.dailyActivity==='object')?base.dailyActivity:{};
+ base.goals={protein:140,sessions:5,weight:80,waist:85,steps:8000,...(base.goals||{})};
+ if(!base.recipes.length)base.recipes=[{name:'Pancake proteico habitual',desc:'Receta personal',kcal:350,p:30,c:38,f:9,aliases:[]},{name:'Yogur griego casero',desc:'1 porción',kcal:120,p:10,c:8,f:5,aliases:['yogur casero']},{name:'Jugo de 2 naranjas',desc:'1 vaso',kcal:124,p:2.4,c:30,f:.4,aliases:['jugo de naranja']}];
  return base;
 }
 let state=migrateState(); localStorage.setItem('biochat09',JSON.stringify(state));
@@ -128,7 +140,7 @@ function mergeCloudState(remote={},local={}){
  const out={...remote,...local};
  out.days={...(remote.days||{}),...(local.days||{})};
  for(const d of Object.keys(out.days)){const rd=(remote.days||{})[d]||{},ld=(local.days||{})[d]||{};out.days[d]={...rd,...ld,meals:{...(rd.meals||{}),...(ld.meals||{})}}}
- const mergeBy=(a=[],b=[],fn)=>{let m=new Map();a.forEach(x=>m.set(fn(x),x));b.forEach(x=>{let k=fn(x),old=m.get(k)||{};m.set(k,{...old,...x,checkout:x.checkout||old.checkout})});return [...m.values()]};
+ const mergeBy=(a=[],b=[],fn)=>{a=Array.isArray(a)?a:[];b=Array.isArray(b)?b:[];let m=new Map();a.filter(Boolean).forEach(x=>m.set(fn(x),x));b.filter(Boolean).forEach(x=>{let k=fn(x),old=m.get(k)||{};m.set(k,{...old,...x,checkout:x.checkout||old.checkout})});return [...m.values()]};
  out.sessions=mergeBy(remote.sessions,local.sessions,x=>x.id||`${x.date}-${x.routine}`);
  out.activities=mergeBy(remote.activities,local.activities,x=>x.id||JSON.stringify(x));
  out.body=mergeBy(remote.body,local.body,x=>x.date);
@@ -142,6 +154,11 @@ async function cloudRequest(method,body){let token=hevyToken();if(!token)return 
 async function pullCloud(){if(cloudSyncBusy||!hevyToken())return;cloudSyncBusy=true;try{let d=await cloudRequest('GET');if(d&&d.state){state=mergeCloudState(d.state,state);localStorage.setItem('biochat09',JSON.stringify(state));render();await cloudRequest('POST',{state,updated_at:new Date().toISOString()})}else if(d&&d.state===null){await cloudRequest('POST',{state,updated_at:new Date().toISOString()})}}catch(e){console.warn('BioChat cloud pull',e)}finally{cloudSyncBusy=false}}
 async function pushCloud(){if(cloudSyncBusy||!hevyToken())return;cloudSyncBusy=true;try{await cloudRequest('POST',{state,updated_at:new Date().toISOString()});localStorage.setItem('biochat09',JSON.stringify(state))}catch(e){console.warn('BioChat cloud push',e)}finally{cloudSyncBusy=false}}
 
+// 1.3.2: iOS Safari/Chrome do not reliably expose elements with id as global JS variables.
+// Older BioChat code relied on that behavior, which caused partial renders (calendar/cards blank).
+const UI_IDS=['today','mWeight','mWaist','mHrv','mHybrid','kcal','nkcal','protein','nprotein','carbs','ncarbs','fat','nfat','dailyKcal','mealList','nutritionMeals','rHrv','rHybrid','rSleep','rVo2','pWeight','pWaist','weightSpark','compare','sessions','activities','hevyStatus','appleHealthStatus','favorites','savedFoods','nutritionBalance','foodHistory','insight','gProtein','gSessions','gSteps','gWeight','gWaist','gpBar','gsBar','gstBar','todaySteps','stepsGoalText','stepsBar','stepsPct','stepsRing','rirProgress','weeklyIntelligence','strengthProgress','muscleVolume','goalDashboard','goalTrend','weightChart','waistChart','proteinChart','sleepChart','hrvChart','stepsChart','routineTabs','routineCard','calendar','monthName','nextWorkoutName','nextWorkoutMeta','panel','sheet','photoStatus'];
+for(const id of UI_IDS){const el=document.getElementById(id);if(el&&!Object.prototype.hasOwnProperty.call(window,id)){try{Object.defineProperty(window,id,{value:el,writable:false,configurable:true})}catch(_){window[id]=el}}}
+function dateObj(k){const [y,m,d]=String(k).split('-').map(Number);return new Date(y,m-1,d)}
 function key(){let d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`} function day(){if(!state.days[key()])state.days[key()]={meals:{}};return state.days[key()]}
 function persist(){localStorage.setItem('biochat09',JSON.stringify(state));render();pushCloud()}
 function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(p).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p));window.scrollTo(0,0)}
@@ -170,12 +187,16 @@ function saveGoals(){state.goals={protein:+goalP.value,sessions:+goalS.value,ste
 let calendarCursor=new Date();
 function changeMonth(n){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+n,1);renderCalendar()}
 function renderCalendar(){
- let now=calendarCursor,y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),offset=(first.getDay()+6)%7;
- monthName.textContent=new Intl.DateTimeFormat('es-AR',{month:'short',year:'numeric'}).format(now);
- let heads=['L','M','X','J','V','S','D'].map(x=>`<div class="calhead">${x}</div>`).join(''),cells='';
- for(let i=0;i<offset;i++)cells+='<div class="calday blank"></div>';
- for(let d=1;d<=last.getDate();d++){let z=n=>String(n).padStart(2,'0'),k=`${y}-${z(m+1)}-${z(d)}`,has=!!state.days[k]||state.sessions.some(x=>x.date===k)||(state.recoveryHistory||[]).some(x=>x.date===k)||state.body.some(x=>x.date===k)||(state.activities||[]).some(x=>x.date===k)||(state.dailyActivity||{})[k];cells+=`<button class="calday ${has?'has':''} ${k===key()?'today':''}" onclick="openDay('${k}')">${d}</button>`}
- calendar.innerHTML=heads+cells
+ try{
+  const cal=document.getElementById('calendar'),label=document.getElementById('monthName'); if(!cal||!label)return;
+  let now=calendarCursor,y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),offset=(first.getDay()+6)%7;
+  label.textContent=new Intl.DateTimeFormat('es-AR',{month:'short',year:'numeric'}).format(now);
+  let heads=['L','M','X','J','V','S','D'].map(x=>`<div class="calhead">${x}</div>`).join(''),cells='';
+  for(let i=0;i<offset;i++)cells+='<div class="calday blank"></div>';
+  const ss=Array.isArray(state.sessions)?state.sessions:[], rh=Array.isArray(state.recoveryHistory)?state.recoveryHistory:[], bb=Array.isArray(state.body)?state.body:[], aa=Array.isArray(state.activities)?state.activities:[];
+  for(let d=1;d<=last.getDate();d++){let z=n=>String(n).padStart(2,'0'),k=`${y}-${z(m+1)}-${z(d)}`,has=!!(state.days||{})[k]||ss.some(x=>x&&x.date===k)||rh.some(x=>x&&x.date===k)||bb.some(x=>x&&x.date===k)||aa.some(x=>x&&x.date===k)||!!(state.dailyActivity||{})[k];cells+=`<button class="calday ${has?'has':''} ${k===key()?'today':''}" onclick="openDay('${k}')">${d}</button>`}
+  cal.innerHTML=heads+cells;
+ }catch(e){console.error('BioChat calendar',e);const cal=document.getElementById('calendar');if(cal)cal.innerHTML='<div class="sub">No se pudo mostrar el calendario. Tus datos siguen guardados.</div>'}
 }
 function showDayTab(id,btn){document.querySelectorAll('.dayPane').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.dayTab').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');btn.classList.add('on')}
 function openDay(k){let d=state.days[k]||{meals:{}},meals=Object.entries(d.meals||{}),sess=state.sessions.filter(x=>x.date===k),acts=(state.activities||[]).filter(x=>x.date===k),rec=(state.recoveryHistory||[]).find(x=>x.date===k)||{},body=state.body.find(x=>x.date===k),da=(state.dailyActivity||{})[k]||{},ah=state.appleHealth?.days?.[k]||{};
@@ -294,8 +315,8 @@ function render(){
  weightSpark.innerHTML=state.body.slice(-8).map((x,i,a)=>{let vals=a.map(y=>y.weight||0),mn=Math.min(...vals),mx=Math.max(...vals),h=mx===mn?45:20+50*(x.weight-mn)/(mx-mn);return `<div class="bar" style="height:${h}px" title="${x.weight} kg"></div>`}).join('');
  let ws=weekStats(0),ps=weekStats(-1);compare.innerHTML=`<div class="listrow"><span>Sesiones</span><b>${ws.sessions} vs ${ps.sessions}</b></div><div class="listrow"><span>Proteína media</span><b>${ws.p?Math.round(ws.p)+' g':'—'} ${ws.p&&ps.p?'('+fmtDelta(ws.p,ps.p,' g')+')':''}</b></div><div class="listrow"><span>HRV media</span><b>${ws.hrv?Math.round(ws.hrv)+' ms':'—'} ${ws.hrv&&ps.hrv?'('+fmtDelta(ws.hrv,ps.hrv,' ms')+')':''}</b></div><div class="listrow"><span>HybridCharge medio</span><b>${ws.hybrid?Math.round(ws.hybrid):'—'}</b></div>`;
  sessions.innerHTML=state.sessions.length?state.sessions.slice(-20).reverse().map(x=>{let idx=state.sessions.indexOf(x);return `<div class="listrow"><div class="clickable" onclick="sessionDetail('${x.id||''}')"><b>${x.routine}</b><div class="hint">${x.date}${x.source==='hevy'?' · Hevy':''}</div></div>${x.checkout?`<button class="secondary done" onclick="checkoutSheet(${idx})">✓ Realizado</button>`:`<button class="secondary" onclick="checkoutSheet(${idx})">Check-out</button>`}</div>`}).join(''):'<div class="sub">Todavía no hay sesiones guardadas.</div>';activities.innerHTML=(state.activities||[]).length?(state.activities||[]).slice(-6).reverse().map(a=>`<div class="listrow"><div><b>${a.type}</b><div class="hint">${a.date} · ${a.duration||0} min${a.distance?' · '+a.distance+' km':''}</div></div><span class="pill">${a.intensity||''}</span></div>`).join(''):'<div class="sub">Padel, running, caminatas y otras actividades aparecerán acá.</div>';if(state.hevy?.lastSync&&document.getElementById('hevyStatus'))document.getElementById('hevyStatus').textContent='Última sincronización: '+new Date(state.hevy.lastSync).toLocaleString('es-AR');if(state.appleHealth?.lastImport&&document.getElementById('appleHealthStatus'))document.getElementById('appleHealthStatus').textContent='Última importación: '+new Date(state.appleHealth.lastImport).toLocaleString('es-AR')+' · '+(state.appleHealth.records||0).toLocaleString('es-AR')+' registros.';
- favorites.innerHTML=(state.recipes||[]).map((x,i)=>`<div class="listrow"><div><b>${x.name}</b><div class="hint">${Math.round(x.kcal)} kcal · ${Math.round(x.p)} g proteína</div></div><button class="secondary" onclick="quickRecipe(${i})">Agregar</button></div>`).join('');
- savedFoods.innerHTML=(state.savedFoods||[]).length?(state.savedFoods||[]).map((x,i)=>`<div class="listrow"><div><b>${x.name}</b><div class="hint">${x.portion||'porción'} · ${Math.round(x.kcal)} kcal · ${Math.round(x.p)} g prot.</div></div><button class="secondary" onclick="foodSheet(${i})">Editar</button></div>`).join(''):'<div class="sub">Guardá productos que repetís y BioChat dejará de estimarlos.</div>'; nutritionBalance.innerHTML=nutritionRead(t);
+ favorites.innerHTML=(Array.isArray(state.recipes)?state.recipes:[]).filter(x=>x&&x.name).map((x,i)=>`<div class="listrow"><div><b>${x.name}</b><div class="hint">${Math.round(Number(x.kcal)||0)} kcal · ${Math.round(Number(x.p)||0)} g proteína</div></div><button class="secondary" onclick="quickRecipe(${i})">Agregar</button></div>`).join('')||'<div class="sub">Todavía no hay recetas guardadas.</div>';
+ let sf=(Array.isArray(state.savedFoods)?state.savedFoods:[]).filter(x=>x&&x.name);savedFoods.innerHTML=sf.length?sf.map((x,i)=>`<div class="listrow"><div><b>${x.name}</b><div class="hint">${x.portion||'porción'} · ${Math.round(Number(x.kcal)||0)} kcal · ${Math.round(Number(x.p)||0)} g prot.</div></div><button class="secondary" onclick="foodSheet(${i})">Editar</button></div>`).join(''):'<div class="sub">Guardá productos que repetís y BioChat dejará de estimarlos.</div>'; nutritionBalance.innerHTML=nutritionRead(t);
  let hist=Object.entries(state.days).slice(-7).reverse();foodHistory.innerHTML=hist.length?hist.map(([date,d])=>{let tt={kcal:0,p:0},entries=Object.values(d.meals||{}),known=entries.some(m=>(m.nutritionKnown!==false)&&((m.kcal||m.p||m.c||m.f)>0));entries.forEach(m=>{tt.kcal+=m.kcal||0;tt.p+=m.p||0});return `<div class="listrow"><div><b>${date}</b><div class="hint">${entries.length} registros</div></div><div style="text-align:right"><b>${known?Math.round(tt.kcal)+' kcal':'Sin datos nutricionales'}</b><div class="hint">${known?Math.round(tt.p)+' g prot.':'registrado sin macros'}</div></div></div>`}).join(''):'<div class="sub">El historial aparecerá a medida que cargues días.</div>';
  insight.innerHTML=nutritionRead(t);
  ensureGoals();renderCalendar();
@@ -314,5 +335,5 @@ function openPhotoDB(){return new Promise((res,rej)=>{let q=indexedDB.open('BioC
 async function savePhoto(view,file){if(!file)return;let db=photoDB||await openPhotoDB(),tx=db.transaction('photos','readwrite');tx.objectStore('photos').put({id:key()+'-'+view,date:key(),view,file});tx.oncomplete=()=>{photoStatus.textContent=`Foto ${view} guardada localmente para ${key()}.`;}}
 openPhotoDB().catch(()=>{});
 
-render();pullCloud();window.addEventListener('focus',pullCloud);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloud()});if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js?v=11',{updateViaCache:'none'}).then(reg=>{reg.update();setInterval(()=>reg.update(),15*60*1000)});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r&&r.update())})}
+try{render()}catch(e){console.error('BioChat render',e)};pullCloud();window.addEventListener('focus',pullCloud);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloud()});if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js?v=132',{updateViaCache:'none'}).then(reg=>{reg.update();setInterval(()=>reg.update(),15*60*1000)});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r&&r.update())})}
 </script></body></html>
