@@ -29,7 +29,7 @@ h1{font-size:28px;margin:25px 0 3px}.muted,.sub{color:var(--muted)}.sub{font-siz
 </style></head><body>
 <div class="app">
 <section id="home" class="page active">
-<div class="top"><div class="brand">BioChat<span>●</span><small class="versionBadge">1.3</small></div><button class="round">◯</button></div>
+<div class="top"><div class="brand">BioChat<span>●</span><small class="versionBadge">1.3.4</small></div><button class="round">◯</button></div>
 <h1>¡Buenas, Germán!</h1><div class="sub" id="today"></div>
 <div class="card"><div class="eyebrow">Objetivo actual · Recomposición</div><div class="big">Más músculo, menos cintura</div><div class="sub" id="goalSummary">BioChat lo evalúa con cintura, peso, fuerza, proteína y actividad; no con un porcentaje arbitrario.</div><div class="mini" id="goalTrend" style="margin-top:8px">Cargando tendencia…</div><div class="goalDashboard" id="goalDashboard"></div></div>
 <div class="section"><h2>Registro rápido</h2><span class="link">Hoy</span></div>
@@ -71,7 +71,7 @@ const routines={
 const foods=[
 ['milanesa',280,25,18,12],['milanesas',280,25,18,12],['puré',220,4,38,6],['pure',220,4,38,6],['huevo',78,6.3,.6,5.3],['huevos',78,6.3,.6,5.3],['banana',105,1.3,27,.4],['yogur',120,10,8,5],['yogurt',120,10,8,5],['pollo',250,46,0,6],['arroz',260,5,56,1],['fideos',330,11,65,4],['papa',190,4,43,.2],['papas',190,4,43,.2],['atún',180,39,0,2],['atun',180,39,0,2],['carne',300,35,0,18],['lomo',330,38,0,20],['palta',160,2,9,15],['helado',140,3,18,7],['vino',125,0,4,0],['naranja',62,1.2,15,.2],['avena',150,5,27,3],['leche',120,8,12,4],['queso',110,7,1,9],['pan',80,3,15,1],['tostada',80,3,15,1],['tomate',22,1,5,.2],['ensalada',80,2,12,3],['batata',180,3,42,.2],['pescado',220,38,0,7],['merluza',190,36,0,4],['lentejas',230,18,40,1],['hamburguesa',300,25,25,16],['taco',210,10,22,9],['pizza',280,12,34,11],['chocolate',210,3,22,13],['granola',180,5,30,6]
 ];
-const APP_VERSION='1.3.3';
+const APP_VERSION='1.3.4';
 function safeParse(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
 function mergeUnique(a=[],b=[],keyFn=x=>JSON.stringify(x)){let m=new Map();[...a,...b].forEach(x=>m.set(keyFn(x),x));return [...m.values()]}
 function migrateState(){
@@ -163,7 +163,33 @@ function key(){let d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFu
 function persist(){localStorage.setItem('biochat09',JSON.stringify(state));render();pushCloud()}
 function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(p).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p));window.scrollTo(0,0)}
 function open(html){document.getElementById('panel').innerHTML=html;document.getElementById('sheet').classList.add('on')} function closeSheet(){document.getElementById('sheet').classList.remove('on')}
-function parseFood(s){let low=s.toLowerCase(),t={kcal:0,p:0,c:0,f:0},used=[];let personal=[...(state.recipes||[]),...(state.savedFoods||[])].sort((a,b)=>(b.name||'').length-(a.name||'').length);personal.forEach(x=>{let names=[x.name,...(x.aliases||[])].filter(Boolean);if(names.some(n=>low.includes(n.toLowerCase()))&&!used.includes(x.name)){['kcal','p','c','f'].forEach(k=>t[k]+=+x[k]||0);used.push(x.name)}});foods.forEach(x=>{if(used.includes(x[0]))return;let i=low.indexOf(x[0]);if(i>=0){let before=low.slice(Math.max(0,i-18),i),m=before.match(/(\d+)\s*(?:\w+\s*)?$/),q=m?+m[1]:1;t.kcal+=x[1]*q;t.p+=x[2]*q;t.c+=x[3]*q;t.f+=x[4]*q;used.push(x[0])}});return t}
+function parseFood(s){
+  const raw=String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  let remaining=' '+raw.replace(/[,;+]/g,' ')+' ',t={kcal:0,p:0,c:0,f:0},used=[];
+  const add=(item,q=1,label='')=>{q=Math.max(.1,Number(q)||1);['kcal','p','c','f'].forEach(k=>t[k]+=(Number(item[k])||0)*q);if(label)used.push(label)};
+  // First use Germán's saved foods/recipes. Once matched, remove the phrase so it cannot be counted again by generic foods.
+  let personal=[...(state.recipes||[]),...(state.savedFoods||[])].filter(x=>x&&x.name).sort((a,b)=>(b.name||'').length-(a.name||'').length);
+  personal.forEach(x=>{let names=[x.name,...(x.aliases||[])].filter(Boolean).map(n=>String(n).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''));for(const n of names){let esc=n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),re=new RegExp('(?:^|\\s)(?:(\\d+(?:[.,]\\d+)?)\\s*(?:x\\s*)?)?'+esc+'(?=\\s|$)','i'),m=remaining.match(re);if(m){let q=m[1]?Number(m[1].replace(',','.')):1;add(x,q,x.name);remaining=remaining.replace(m[0],' ');break}}});
+  // Typical Argentine portions. Specific phrases go before generic ingredients and are consumed once.
+  const rules=[
+    {names:['milanesas de merluza','milanesa de merluza'],kcal:250,p:22,c:16,f:11},
+    {names:['milanesas de pescado','milanesa de pescado'],kcal:260,p:22,c:17,f:12},
+    {names:['milanesas','milanesa'],kcal:280,p:25,c:18,f:12},
+    {names:['huevos','huevo'],kcal:78,p:6.3,c:.6,f:5.3},
+    {names:['paltas','palta'],kcal:240,p:3,c:13,f:22},
+    {names:['tomates','tomate'],kcal:22,p:1,c:5,f:.2},
+    {names:['bananas','banana'],kcal:105,p:1.3,c:27,f:.4},
+    {names:['naranjas','naranja'],kcal:62,p:1.2,c:15,f:.2},
+    {names:['porciones de pizza','porcion de pizza','pizza'],kcal:280,p:12,c:34,f:11},
+    {names:['tacos','taco'],kcal:210,p:10,c:22,f:9}
+  ];
+  rules.forEach(r=>{for(const name of r.names){let esc=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),re=new RegExp('(?:^|\\s)(?:(\\d+(?:[.,]\\d+)?)\\s*(?:x\\s*)?)?'+esc+'(?=\\s|$)','i'),m=remaining.match(re);if(m){let q=m[1]?Number(m[1].replace(',','.')):1;add(r,q,name);remaining=remaining.replace(m[0],' ');break}}});
+  // Generic catalog: exact whole-word match, longest names first, never singular+plural double counting.
+  const generic=foods.map(x=>({name:String(x[0]).normalize('NFD').replace(/[\u0300-\u036f]/g,''),kcal:x[1],p:x[2],c:x[3],f:x[4]})).sort((a,b)=>b.name.length-a.name.length);
+  const roots=new Set();
+  generic.forEach(x=>{let root=x.name.replace(/s$/,'');if(roots.has(root))return;let esc=x.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),re=new RegExp('(?:^|\\s)(?:(\\d+(?:[.,]\\d+)?)\\s*(?:x\\s*)?)?'+esc+'(?=\\s|$)','i'),m=remaining.match(re);if(m){let q=m[1]?Number(m[1].replace(',','.')):1;add(x,q,x.name);roots.add(root);remaining=remaining.replace(m[0],' ')}});
+  t.items=used;return t;
+}
 function mealSheet(type='Almuerzo',editType=null){let m=editType?day().meals[editType]:null;open(`<h2>${m?'Editar':'Registrar'} comida</h2><select id="mt">${mealNames.map(x=>`<option ${x===(m?editType:type)?'selected':''}>${x}</option>`).join('')}</select><textarea id="food" placeholder="Ej: 2 milanesas con puré">${m?m.text:''}</textarea><div class="row"><input id="mk" type="number" step=".1" value="${m?.kcal??''}" placeholder="kcal"><input id="mp" type="number" step=".1" value="${m?.p??''}" placeholder="proteína g"></div><div class="row"><input id="mc" type="number" step=".1" value="${m?.c??''}" placeholder="carbos g"><input id="mf" type="number" step=".1" value="${m?.f??''}" placeholder="grasas g"></div><p class="hint">Si dejás los macros vacíos, BioChat intenta estimarlos. Si no reconoce el alimento, lo marcará como sin información nutricional para que no parezca 0 kcal.</p><button class="primary" onclick="saveMeal(${editType?`'${editType}'`:'null'})">${m?'Guardar cambios':'Calcular y guardar'}</button>${m?`<button class="secondary" style="width:100%;margin-top:8px;color:var(--red)" onclick="deleteMeal('${editType}')">Eliminar registro</button>`:''}`)}
 function saveMeal(editType=null){let type=document.getElementById('mt').value,text=document.getElementById('food').value.trim();if(!text)return;let vals=['mk','mp','mc','mf'].map(id=>document.getElementById(id).value),manual=vals.some(v=>v!=='');let parsed=manual?{kcal:+vals[0]||0,p:+vals[1]||0,c:+vals[2]||0,f:+vals[3]||0}:parseFood(text);let known=manual||Object.values(parsed).some(v=>v>0);if(editType&&editType!==type)delete day().meals[editType];day().meals[type]={text,...parsed,nutritionKnown:known};persist();closeSheet()}
 function deleteMeal(type){if(!confirm('¿Eliminar este registro?'))return;delete day().meals[type];persist();closeSheet()}
@@ -342,5 +368,5 @@ function openPhotoDB(){return new Promise((res,rej)=>{let q=indexedDB.open('BioC
 async function savePhoto(view,file){if(!file)return;let db=photoDB||await openPhotoDB(),tx=db.transaction('photos','readwrite');tx.objectStore('photos').put({id:key()+'-'+view,date:key(),view,file});tx.oncomplete=()=>{photoStatus.textContent=`Foto ${view} guardada localmente para ${key()}.`;}}
 openPhotoDB().catch(()=>{});
 
-try{render()}catch(e){console.error('BioChat render',e)};pullCloud();window.addEventListener('focus',pullCloud);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloud()});if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js?v=133',{updateViaCache:'none'}).then(reg=>{reg.update();setInterval(()=>reg.update(),15*60*1000)});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r&&r.update())})}
+try{render()}catch(e){console.error('BioChat render',e)};pullCloud();window.addEventListener('focus',pullCloud);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloud()});if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js?v=134',{updateViaCache:'none'}).then(reg=>{reg.update();setInterval(()=>reg.update(),15*60*1000)});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r&&r.update())})}
 </script></body></html>
