@@ -478,7 +478,21 @@ const choices=[
  ['Yogur','a cup of yogurt','porción',175,125,12,14,2],
  ['Papas fritas','french fries on a plate','porción',150,470,5,55,23],
  ['Jugo de naranja','a glass of orange juice','vaso',250,110,2,25,0],
- ['Café con leche','a cup of coffee with milk','taza',250,105,6,10,4]
+ ['Café con leche','a cup of coffee with milk','taza',250,105,6,10,4],
+ ['Leche','a glass of milk','vaso',250,120,8,12,5],
+ ['Avena','a bowl of oatmeal','porción',60,230,8,39,4],
+ ['Granola','granola in a bowl','porción',45,210,5,30,8],
+ ['Miel','honey drizzled on food','porción',20,60,0,16,0],
+ ['Mantequilla de maní','peanut butter spread on food','porción',30,180,7,6,15],
+ ['Pan','a piece of bread','porción',60,160,5,30,2],
+ ['Queso','cheese on a plate','porción',40,135,10,1,10],
+ ['Banana','a banana on a plate','unidad',120,105,1,27,0],
+ ['Frutos secos','mixed nuts in a bowl','porción',30,180,5,6,15],
+ ['Huevo','a boiled egg on a plate','unidad',50,78,6,1,5],
+ ['Puré de papas','mashed potatoes on a plate','porción',180,190,4,32,5],
+ ['Tomate','sliced tomatoes on a plate','porción',120,22,1,5,0],
+ ['Palta','sliced avocado on a plate','porción',100,160,2,9,15],
+ ['Aceite añadido','oil added to food','porción',10,90,0,0,10]
 ];
 let meal='',file=null,url=null,items=[],classifierPromise=null;
 const byId=id=>document.getElementById(id);
@@ -502,13 +516,31 @@ async function analyze(){if(!file)return;let button=byId('photoMealAnalyze');but
  if(!classifierPromise)classifierPromise=import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1').then(({pipeline})=>pipeline('zero-shot-image-classification','Xenova/clip-vit-base-patch32',{dtype:'q8',device:'wasm'}));
  const classifier=await classifierPromise;
  const labels=choices.map(x=>x[1]);
- // Pasar bytes locales, sin subir la foto a un servidor.
- const result=await classifier(file,labels,{top_k:3});
+ // Pasar la foto local al modelo, sin enviarla como petición de análisis.
+ const results=[];
+ const whole=await classifier(file,labels,{top_k:5});
+ results.push(...whole.slice(0,3));
+ // Dos regiones solapadas ayudan a proponer también bebidas o acompañamientos visibles.
+ // Si el navegador no permite recortar la foto, conservamos el resultado del plato entero.
+ try{
+   const photo=byId('photoMealPreview');
+   await photo.decode();
+   for(const [offset,height] of [[0,.62],[.38,.62]]){
+     const canvas=document.createElement('canvas');canvas.width=320;canvas.height=320;
+     const ctx=canvas.getContext('2d');if(!ctx)break;
+     ctx.drawImage(photo,0,photo.naturalHeight*offset,photo.naturalWidth,photo.naturalHeight*height,0,0,320,320);
+     const crop=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.8));
+     if(!crop)continue;
+     const portion=await classifier(crop,labels,{top_k:2});
+     results.push(...portion.slice(0,2));
+   }
+ }catch(e){console.debug('Análisis de regiones omitido',e)}
  if(!byId('photoMealSuggestions'))return;
- const top=result.slice(0,3).map(x=>choices.findIndex(c=>c[1]===x.label)).filter(i=>i>=0);
- byId('photoMealSuggestions').innerHTML='<p class="hint">Posibles alimentos (confirmá cuál corresponde):</p>';
+ const ranked=new Map();for(const match of results){const idx=choices.findIndex(c=>c[1]===match.label);if(idx>=0)ranked.set(idx,Math.max(ranked.get(idx)||0,match.score))}
+ const top=[...ranked].sort((a,b)=>b[1]-a[1]).slice(0,6).map(([idx])=>idx);
+ byId('photoMealSuggestions').innerHTML='<p class="hint">Posibles alimentos visibles (elegí únicamente los correctos):</p>';
  for(const i of top){let b=document.createElement('button');b.type='button';b.className='secondary';b.style.margin='0 6px 6px 0';b.textContent=choices[i][0];b.onclick=()=>addFood(i);byId('photoMealSuggestions').appendChild(b)}
- setStatus('Reconocimiento completado. Elegí el alimento correcto, agregá el resto y corregí las cantidades.');
+ setStatus('Reconocimiento completado. La foto muestra opciones, no pesos ni ingredientes ocultos: confirmá cada alimento y sus gramos.');
  }catch(e){console.error('Reconocimiento de comida',e);classifierPromise=null;setStatus('No se pudo cargar el modelo en este dispositivo o conexión. Podés elegir los alimentos manualmente y guardar igual.')}finally{if(button.isConnected)button.disabled=false}}
 function save(){if(!items.length){setStatus('Agregá al menos un alimento antes de guardar.');return}if(items.some(x=>!Number.isFinite(x.grams)||x.grams<=0||x.grams>3000)){setStatus('Revisá los gramos de cada alimento.');return}
  const values=totals(),description=items.map(x=>`${choices[x.index][0]} ${Math.round(x.grams)} g`).join(' + ');
