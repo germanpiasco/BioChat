@@ -1,0 +1,20 @@
+PROYECTO THOR 2.4 — SUBIDA A GITHUB
+Subí TODOS estos archivos a la RAÍZ del repositorio BioChat:
+index.html
+manifest.json
+sw.js
+icono-180.png
+icono-192.png
+icono-512.png
+thor-axe.jpg
+comida-desayuno.jpg
+comida-almuerzo.jpg
+comida-merienda.jpg
+comida-cena.jpg
+
+No hay carpetas assets/ ni icons/ en esta versión.
+
+RECUPERACIÓN:
+La reinstalación puede perder el token local. En Proyecto Thor abrí Más > conexión Hevy/Cloud y pegá nuevamente tu BIOCHAT_TOKEN.
+Al guardarlo, 2.4 primero descarga el respaldo Cloudflare. Si el estado local está vacío y el remoto tiene historial, el remoto tiene prioridad.
+No cargues un estado vacío sobre el respaldo antes de recuperar.
