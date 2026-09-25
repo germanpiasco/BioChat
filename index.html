@@ -42,7 +42,7 @@ h1{font-size:28px;margin:25px 0 3px}.muted,.sub{color:var(--muted)}.sub{font-siz
 <div class="section"><h2>BioChat</h2><span class="link">Lectura</span></div><div class="card sub" id="insight">Cargá tu día y BioChat va a convertir los datos en tendencias simples y accionables.</div>
 </section>
 
-<section id="nutrition" class="page"><div class="top"><div class="brand">Nutrición</div><button class="round" onclick="mealSheet()">＋</button></div><h1>Comidas</h1><div class="sub">Carga rápida, sin pesar todo.</div><div class="card macrobar"><div class="macro"><b id="nkcal">0</b><small>kcal</small></div><div class="macro"><b id="nprotein">0g</b><small>proteína</small></div><div class="macro"><b id="ncarbs">0g</b><small>carbos</small></div><div class="macro"><b id="nfat">0g</b><small>grasas</small></div></div><div class="section"><h2>Cómo venís hoy</h2><span class="link">BioChat</span></div><div class="card balance" id="nutritionBalance"></div><div class="section"><h2>Hoy</h2><span class="link" onclick="mealSheet('Snacks')">+ Snack</span></div><div class="card" id="nutritionMeals"></div><div class="section"><h2>Mis alimentos</h2><span class="link" onclick="foodSheet()">+ Guardar</span></div><div class="card" id="savedFoods"></div><div class="section"><h2>Mis recetas</h2><span class="link" onclick="recipeSheet()">+ Crear</span></div><div class="card" id="favorites"></div><div class="section"><h2>Últimos 7 días</h2><span class="link">Historial</span></div><div class="card" id="foodHistory"></div></section>
+<section id="nutrition" class="page"><div class="top"><div class="brand">Nutrición</div><button class="round" onclick="mealSheet()">＋</button></div><h1>Comidas</h1><div class="sub">Carga rápida, sin pesar todo.</div><div class="card macrobar"><div class="macro"><b id="nkcal">0</b><small>kcal</small></div><div class="macro"><b id="nprotein">0g</b><small>proteína</small></div><div class="macro"><b id="ncarbs">0g</b><small>carbos</small></div><div class="macro"><b id="nfat">0g</b><small>grasas</small></div></div><div class="section"><h2>Cómo venís hoy</h2><span class="link">BioChat</span></div><div class="card balance" id="nutritionBalance"></div><div class="section"><h2>Registrar con foto</h2></div><div class="card" id="foodPhotoCard"><b>📷 Analizar comida</b><p class="hint">Sacá una foto del plato o elegí una de tu galería.</p><input id="foodPhotoCamera" type="file" accept="image/*" capture="environment" hidden><input id="foodPhotoGallery" type="file" accept="image/*" hidden><div class="row"><button class="secondary" type="button" onclick="document.getElementById('foodPhotoCamera').click()">Cámara</button><button class="secondary" type="button" onclick="document.getElementById('foodPhotoGallery').click()">Galería</button></div><div id="foodPhotoPreview" hidden style="margin-top:12px"><img id="foodPhotoImage" alt="Vista previa de la comida" style="width:100%;max-height:340px;object-fit:contain;border-radius:12px;background:#111"><p id="foodPhotoDetails" class="hint"></p><button class="primary" type="button" id="foodPhotoAnalyze">Analizar foto</button><button class="secondary" type="button" id="foodPhotoDiscard" style="width:100%;margin-top:8px">Descartar foto</button></div><p id="foodPhotoStatus" class="hint" role="status" aria-live="polite"></p></div><div class="section"><h2>Hoy</h2><span class="link" onclick="mealSheet('Snacks')">+ Snack</span></div><div class="card" id="nutritionMeals"></div><div class="section"><h2>Mis alimentos</h2><span class="link" onclick="foodSheet()">+ Guardar</span></div><div class="card" id="savedFoods"></div><div class="section"><h2>Mis recetas</h2><span class="link" onclick="recipeSheet()">+ Crear</span></div><div class="card" id="favorites"></div><div class="section"><h2>Últimos 7 días</h2><span class="link">Historial</span></div><div class="card" id="foodHistory"></div></section>
 
 <section id="training" class="page"><div class="top"><div class="brand">Entrenamiento</div><button class="round" onclick="workoutSheet()">＋</button></div><h1>Bloque 1</h1><div class="sub">Progresión por reps + carga + RIR.</div><div class="tabs" id="routineTabs"></div><div class="card" id="routineCard"></div><div class="section"><h2>Hevy</h2><span class="link">Pro</span></div><div class="card"><div class="workoutHead"><div><b>Sincronización Hevy</b><div class="hint">Importa entrenamientos y evita duplicados por ID.</div></div><span class="pill">API</span></div><button class="primary" onclick="syncHevy()">Sincronizar Hevy</button><button class="secondary" style="width:100%;margin-top:8px" onclick="hevySettings()">Configurar conexión</button><div class="hevyStatus" id="hevyStatus">Todavía no sincronizado.</div></div><div class="section"><h2>Actividad</h2><span class="link" onclick="activitySheet()">+ Registrar</span></div><div class="card" id="activities"></div><div class="section"><h2>Últimas sesiones</h2></div><div class="card" id="sessions"></div></section>
 
@@ -399,4 +399,39 @@ async function renderProgressPhotos(date=key()){try{let rows=await photoAll(),fo
 function openPhotoViewer(p){let url=URL.createObjectURL(p.file),wrap=document.createElement('div');wrap.className='photoViewer';wrap.innerHTML=`<img alt="${PHOTO_VIEWS[p.view]}"><div class="photoViewerActions"><button class="secondary" id="photoReplace">Reemplazar</button><button class="secondary" id="photoClose">Cerrar</button></div>`;wrap.querySelector('img').src=url;document.body.appendChild(wrap);let close=()=>{URL.revokeObjectURL(url);wrap.remove()};wrap.querySelector('#photoClose').onclick=close;wrap.querySelector('#photoReplace').onclick=()=>{let input=document.getElementById('photoInput-'+p.view);close();input?.click()};wrap.onclick=e=>{if(e.target===wrap)close()}}
 openPhotoDB().then(()=>renderProgressPhotos()).catch(()=>{});
 try{render()}catch(e){console.error('BioChat render',e)};renderProgressPhotos();pullCloud();window.addEventListener('focus',pullCloud);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloud()});if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js?v=136',{updateViaCache:'none'}).then(reg=>{reg.update();setInterval(()=>reg.update(),15*60*1000)});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r&&r.update())})}
+</script><script>
+(()=>{
+  let selectedFile=null, previewUrl=null;
+  const $=id=>document.getElementById(id);
+  const status=$('foodPhotoStatus');
+  function discard(){
+    selectedFile=null;
+    if(previewUrl)URL.revokeObjectURL(previewUrl);
+    previewUrl=null;
+    $('foodPhotoImage').removeAttribute('src');
+    $('foodPhotoPreview').hidden=true;
+    $('foodPhotoCamera').value='';
+    $('foodPhotoGallery').value='';
+    status.textContent='';
+  }
+  function choose(event){
+    const file=event.target.files?.[0];
+    if(!file)return;
+    if(!file.type.startsWith('image/')){discard();status.textContent='Elegí un archivo de imagen.';return}
+    discard();
+    selectedFile=file;
+    previewUrl=URL.createObjectURL(file);
+    $('foodPhotoImage').src=previewUrl;
+    $('foodPhotoDetails').textContent=`Foto recibida · ${(file.size/1024).toFixed(0)} KB`;
+    $('foodPhotoPreview').hidden=false;
+  }
+  $('foodPhotoCamera').addEventListener('change',choose);
+  $('foodPhotoGallery').addEventListener('change',choose);
+  $('foodPhotoDiscard').addEventListener('click',discard);
+  $('foodPhotoAnalyze').addEventListener('click',()=>{
+    if(!selectedFile)return;
+    status.textContent=`✓ BioChat recibió la imagen (${(selectedFile.size/1024).toFixed(0)} KB). El reconocimiento nutricional todavía no está conectado.`;
+  });
+  window.addEventListener('pagehide',()=>{if(previewUrl)URL.revokeObjectURL(previewUrl)});
+})();
 </script></body></html>
