@@ -1,0 +1,5 @@
+const CACHE='proyecto-thor-2.7.0';
+const ASSETS=["./", "./index.html", "./manifest.json", "./icons/icono-180.png", "./icons/icono-192.png", "./icons/icono-512.png", "./assets/thor-axe.jpg", "./assets/anatomia-thor.png", "./assets/meal-breakfast.png", "./assets/meal-lunch.png", "./assets/meal-snack.png", "./assets/meal-dinner.png", "./assets/meal-other.png"];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
+self.addEventListener('activate',e=>{e.waitUntil((async()=>{for(const k of await caches.keys())if(k!==CACHE)await caches.delete(k);await self.clients.claim()})())});
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin===location.origin&&e.request.mode==='navigate'){e.respondWith(fetch(e.request,{cache:'no-store'}).catch(()=>caches.match('./index.html')));return}if(u.origin===location.origin)e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return r}).catch(()=>caches.match(e.request)))});
