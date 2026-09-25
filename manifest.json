@@ -1,11 +1,11 @@
 {
-  "name": "BioChat",
-  "short_name": "BioChat",
+  "name": "Proyecto Thor",
+  "short_name": "Thor",
   "id": "/BioChat/",
-  "start_url": "./?app=136",
+  "start_url": "./?app=200",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#071316",
-  "theme_color": "#071316",
-  "description": "BioChat 1.3.6 — fotos visibles, parser nutricional y recetas editables."
+  "background_color": "#09090b",
+  "theme_color": "#0b090b",
+  "description": "Proyecto Thor — entrenamiento, nutrición, recuperación y progreso."
 }
