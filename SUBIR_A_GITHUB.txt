@@ -1,1 +1,0 @@
-Subí TODOS estos archivos directamente a la raíz de germanpiasco/BioChat, reemplazando los existentes. Luego abrí https://germanpiasco.github.io/BioChat/?app=260 . Si la reinstalación perdió la conexión, en Más > Conexión Hevy pegá nuevamente tu BIOCHAT_TOKEN: 2.6 recupera primero Cloudflare y después sincroniza Hevy.
