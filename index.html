@@ -1,6 +1,6 @@
 <!doctype html><html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b090b"><title>Proyecto Thor</title><link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b090b"><title>Proyecto Thor</title><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icons/icon-180.png"><meta name="apple-mobile-web-app-title" content="Proyecto Thor"><meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 :root{--bg:#09090b;--card:#121316;--card2:#18191d;--line:#352126;--text:#f7f3f1;--muted:#a59a98;--mint:#ef3340;--cyan:#ff625f;--orange:#ff9b55;--red:#ef3340;--ember:#8f111b;--steel:#b7b9bd;--gold:#d9b36c}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -12%,#401017 0,#160b0e 25%,#09090b 62%,#050506 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -65,6 +65,29 @@ linear-gradient(135deg,#251014,#0c0d0f 60%);border:1px solid #51252d}
 .volumeRow{display:grid;grid-template-columns:82px 1fr 58px;gap:8px;align-items:center;padding:7px 0}.volumeTrack{height:8px;background:#2a1b1e;border-radius:99px;overflow:hidden}.volumeFill{height:100%;background:linear-gradient(90deg,#8e1720,#ef3340);border-radius:99px}
 .thorSectionTitle{display:flex;justify-content:space-between;align-items:center;margin-top:22px}.thorSectionTitle h2{font-size:17px;margin:0}.thorBadge{font-size:10px;color:#ff5b63;text-transform:uppercase;letter-spacing:1px}
 
+
+/* Proyecto Thor 2.1 — visual pass */
+.app{max-width:560px;padding-left:18px;padding-right:18px}
+.top{margin-bottom:8px}.thorMark{width:44px;height:44px}.thorTitle strong{font-size:24px}
+h1{font-size:30px;letter-spacing:-.6px}.section h2{font-size:19px}
+.card{border-radius:20px;border:1px solid #49252b;background:linear-gradient(145deg,#17181b,#0a0b0d)}
+.warriorHero{min-height:132px;display:flex;flex-direction:column;justify-content:flex-end;background:
+linear-gradient(90deg,#090a0c 0%,#100b0d 50%,#2b0d12 100%);border-color:#5c222c}
+.warriorHero:before{content:"⚒";position:absolute;right:22px;top:13px;font-size:70px;opacity:.17;transform:rotate(-22deg);filter:drop-shadow(0 0 12px #ef3340)}
+.warriorQuote{font-size:16px;line-height:1.35;max-width:330px}.warriorQuote b{font-size:20px}
+.meal{min-height:86px}.mealThumb{width:68px;height:68px;border-radius:17px;box-shadow:inset 0 0 0 1px #ffffff0a,0 7px 18px #0007}
+.mealText b{font-size:17px;margin-bottom:4px}.mealText small{font-size:13px;line-height:1.35}
+.macro{padding:14px 7px}.macro b{font-size:20px}
+.routineVisual{display:flex;gap:12px;align-items:center}.routineVisualIcon{width:66px;height:66px;border-radius:16px;display:grid;place-items:center;background:radial-gradient(circle,#6b1d26,#1b1013 70%);font-size:34px;border:1px solid #54232b}
+.checkoutGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:8px 0 15px}.checkoutChoice{border:1px solid #4b292f;background:#17181b;color:#d8cecc;border-radius:12px;padding:10px 4px;font-size:11px}.checkoutChoice.on{border-color:#ef3340;background:#45141a;color:white}
+.checkoutSaved{padding:12px;border-radius:14px;background:#251115;border:1px solid #5b222b;margin-top:10px}
+.sessionExercise{padding:12px 0;border-bottom:1px solid #352126}.sessionExercise:last-child{border:0}.sessionSets{font-size:12px;color:#b7aaa7;margin-top:5px;line-height:1.55}
+.bodyFig{height:300px;background:radial-gradient(circle at 50% 42%,#5c141d55 0,transparent 58%);border:0}
+.bodyFig svg{height:286px;width:145px}.bodyFig .skin{fill:#24262a;stroke:#6b6d72;stroke-width:.8}.bodyFig .muscle{fill:#442126;stroke:#7c3038;stroke-width:.45}
+.muscleMap{gap:4px}.muscleLegend{justify-content:center}.volumeRow{grid-template-columns:92px 1fr 64px}
+#muscleBars .volumeRow b{font-size:11px}
+.nav{background:#071012f2;border-top-color:#3d2025}.nav button{font-size:11px}.nav em{font-size:22px}
+
 </style></head><body>
 <div class="app">
 <section id="home" class="page active">
@@ -89,11 +112,31 @@ linear-gradient(135deg,#251014,#0c0d0f 60%);border:1px solid #51252d}
 <div class="card" id="weeklyIntelligence"></div>
 <div class="section"><h2>Progresión de fuerza</h2><span class="link">Mejor serie</span></div>
 <div class="card" id="strengthProgress"></div>
-<div class="section"><h2>Progresión comparable</h2><span class="link">RIR ±1</span></div><div class="card" id="rirProgress"></div><div class="section"><h2>Músculos trabajados</h2><span class="link">Últimas sesiones</span></div>
-<div class="card"><div class="muscleMap">
-<div class="bodyFig" id="muscleFront"><svg viewBox="0 0 120 260"><circle class="skin" cx="60" cy="23" r="16"/><path class="skin" d="M43 42Q60 34 77 42L86 100 77 139 73 250H59L57 145 47 250H33L42 139 34 100z"/><path class="muscle" data-muscle="Pecho" d="M44 51Q60 42 76 51L74 77Q60 83 46 77z"/><path class="muscle" data-muscle="Hombros" d="M34 51Q40 43 47 46L43 74 31 68zM86 51Q80 43 73 46L77 74 89 68z"/><path class="muscle" data-muscle="Bíceps" d="M31 70L43 75 38 112 27 108zM89 70L77 75 82 112 93 108z"/><path class="muscle" data-muscle="Core" d="M48 81H72L75 132 45 132z"/><path class="muscle" data-muscle="Cuádriceps" d="M43 140L57 143 54 203 37 203zM77 140L63 143 66 203 83 203z"/><path class="muscle" data-muscle="Gemelos" d="M36 207L53 207 49 246 34 246zM84 207L67 207 71 246 86 246z"/></svg></div>
-<div class="bodyFig" id="muscleBack"><svg viewBox="0 0 120 260"><circle class="skin" cx="60" cy="23" r="16"/><path class="skin" d="M43 42Q60 34 77 42L86 100 77 139 73 250H59L57 145 47 250H33L42 139 34 100z"/><path class="muscle" data-muscle="Espalda" d="M43 48Q60 41 77 48L80 98 69 123 60 108 51 123 40 98z"/><path class="muscle" data-muscle="Hombros" d="M34 51Q40 43 47 46L43 74 31 68zM86 51Q80 43 73 46L77 74 89 68z"/><path class="muscle" data-muscle="Tríceps" d="M31 70L43 75 38 112 27 108zM89 70L77 75 82 112 93 108z"/><path class="muscle" data-muscle="Glúteos" d="M43 128Q51 120 59 130L57 159Q47 163 40 154zM77 128Q69 120 61 130L63 159Q73 163 80 154z"/><path class="muscle" data-muscle="Femoral" d="M40 160L57 160 53 205 36 205zM80 160L63 160 67 205 84 205z"/><path class="muscle" data-muscle="Gemelos" d="M36 207L53 207 49 246 34 246zM84 207L67 207 71 246 86 246z"/></svg></div>
-</div><div class="muscleLegend"><span><i style="background:#4b252a"></i>Ligero</span><span><i style="background:#8e1720"></i>Moderado</span><span><i style="background:#ef3340"></i>Más trabajado</span></div><div id="muscleBars"></div></div>
+<div class="section"><h2>Progresión comparable</h2><span class="link">RIR ±1</span></div><div class="card" id="rirProgress"></div><div class="section"><h2>Músculos trabajados</h2><span class="link">Últimas 8 sesiones</span></div>
+<div class="card">
+<div class="muscleMap">
+<div class="bodyFig" id="muscleFront"><svg viewBox="0 0 150 300" aria-label="Cuerpo frontal">
+<circle class="skin" cx="75" cy="24" r="18"/><path class="skin" d="M60 43Q75 37 90 43L103 63 98 116 91 143 91 169 87 215 86 286H72L70 205 66 286H52L54 215 59 169 59 143 52 116 47 63z"/>
+<path class="muscle" data-muscle="Pecho" d="M60 53Q67 47 74 52L73 82Q64 83 57 75zM90 53Q83 47 76 52L77 82Q86 83 93 75z"/>
+<path class="muscle" data-muscle="Hombros" d="M51 57Q56 47 63 48L58 77 48 72zM99 57Q94 47 87 48L92 77 102 72z"/>
+<path class="muscle" data-muscle="Bíceps" d="M48 76L58 79 55 111 44 108zM102 76L92 79 95 111 106 108z"/>
+<path class="muscle" data-muscle="Tríceps" d="M45 109L55 112 51 135 42 131zM105 109L95 112 99 135 108 131z"/>
+<path class="muscle" data-muscle="Core" d="M61 84H73V139H59zM77 84H89L91 139H77z"/>
+<path class="muscle" data-muscle="Cuádriceps" d="M58 148Q66 142 70 151L68 213 54 213zM92 148Q84 142 80 151L82 213 96 213z"/>
+<path class="muscle" data-muscle="Gemelos" d="M54 218Q62 212 67 221L65 278H52zM96 218Q88 212 83 221L85 278H98z"/>
+</svg></div>
+<div class="bodyFig" id="muscleBack"><svg viewBox="0 0 150 300" aria-label="Cuerpo posterior">
+<circle class="skin" cx="75" cy="24" r="18"/><path class="skin" d="M60 43Q75 37 90 43L103 63 98 116 91 143 91 169 87 215 86 286H72L70 205 66 286H52L54 215 59 169 59 143 52 116 47 63z"/>
+<path class="muscle" data-muscle="Hombros" d="M51 57Q56 47 64 48L59 75 48 72zM99 57Q94 47 86 48L91 75 102 72z"/>
+<path class="muscle" data-muscle="Espalda" d="M61 51Q75 46 89 51L94 83 87 126 76 111 74 111 63 126 56 83z"/>
+<path class="muscle" data-muscle="Tríceps" d="M48 76L58 79 53 126 43 122zM102 76L92 79 97 126 107 122z"/>
+<path class="muscle" data-muscle="Glúteos" d="M59 132Q68 124 74 135L72 165Q63 170 57 160zM91 132Q82 124 76 135L78 165Q87 170 93 160z"/>
+<path class="muscle" data-muscle="Femoral" d="M57 169L70 169 67 214 53 214zM93 169L80 169 83 214 97 214z"/>
+<path class="muscle" data-muscle="Gemelos" d="M54 218Q62 212 67 221L65 278H52zM96 218Q88 212 83 221L85 278H98z"/>
+</svg></div>
+</div>
+<div class="muscleLegend"><span><i style="background:#442126"></i>Ligero</span><span><i style="background:#a51722"></i>Moderado</span><span><i style="background:#ef3340"></i>Más trabajado</span></div>
+<div id="muscleBars"></div></div>
 <div class="section"><h2>Volumen por grupo</h2><span class="link">Últimas sesiones</span></div>
 <div class="card" id="muscleVolume"></div><div class="section"><h2>Estadísticas</h2><span class="link">Tendencias</span></div><div class="card"><div class="sectionChartTitle"><b>Peso</b><span>controles</span></div><div class="chart" id="weightChart"></div><div class="sectionChartTitle"><b>Cintura</b><span>cm</span></div><div class="chart" id="waistChart"></div><div class="sectionChartTitle"><b>Proteína registrada</b><span>g/día</span></div><div class="chart" id="proteinChart"></div><div class="sectionChartTitle"><b>Sueño</b><span>horas</span></div><div class="chart" id="sleepChart"></div><div class="sectionChartTitle"><b>HRV</b><span>ms</span></div><div class="chart" id="hrvChart"></div><div class="sectionChartTitle"><b>Pasos</b><span>por día</span></div><div class="chart" id="stepsChart"></div></div>
 <div class="section"><h2>Fotos de progreso</h2><span class="link" onclick="renderProgressPhotos()">Actualizar</span></div><div class="card"><div class="row"><label class="photoBox" id="photoBox-front"><span id="photoEmpty-front">Frente<br>＋</span><input id="photoInput-front" hidden type="file" accept="image/*" onchange="savePhoto('front',this.files[0]);this.value=''"></label><label class="photoBox" id="photoBox-side"><span id="photoEmpty-side">Perfil<br>＋</span><input id="photoInput-side" hidden type="file" accept="image/*" onchange="savePhoto('side',this.files[0]);this.value=''"></label><label class="photoBox" id="photoBox-back"><span id="photoEmpty-back">Espalda<br>＋</span><input id="photoInput-back" hidden type="file" accept="image/*" onchange="savePhoto('back',this.files[0]);this.value=''"></label></div><div id="photoStatus" class="hint" style="margin-top:10px">Las fotos quedan guardadas localmente en este dispositivo y no se envían a un servidor.</div></div></section>
@@ -249,7 +292,47 @@ function recoverySheet(){let r=state.recovery||{};open(`<h2>Datos Zepp</h2><div 
 function saveRecovery(){state.recovery={date:key(),hrv:+rh.value,hybrid:+hy.value,sleep:sl.value,vo2:+vo.value,stress:stress.value};state.recoveryHistory=state.recoveryHistory||[];state.recoveryHistory.push({...state.recovery});persist();closeSheet()}
 function workoutSheet(){let first=Object.keys(routines)[0];open(`<h2>Registrar entrenamiento</h2><select id="wr" onchange="buildWorkout(this.value)">${Object.keys(routines).map(x=>`<option>${x}</option>`).join('')}</select><div id="workbuild"></div><button class="primary" onclick="saveWorkout()">Guardar sesión</button>`);buildWorkout(first)}
 function buildWorkout(name){document.getElementById('workbuild').innerHTML=routines[name].map((e,i)=>`<div class="exercise" data-ex="${e[0]}"><b>${e[0]}</b><div class="hint">${e[1]} series · ${e[2]} reps · objetivo RIR ${e[3]}</div><div class="sets">${Array.from({length:+e[1]},(_,j)=>`<div class="setrow"><input value="S${j+1}" disabled><input class="kg" type="number" step=".5" placeholder="kg"><input class="reps" type="number" placeholder="reps"><input class="rir" type="number" placeholder="RIR"></div>`).join('')}</div><input class="rest" type="number" placeholder="Descanso objetivo (seg)"></div>`).join('')}
-function saveWorkout(){let exercises=[];document.querySelectorAll('#workbuild .exercise').forEach(e=>{let sets=[...e.querySelectorAll('.setrow')].map(r=>({kg:+r.querySelector('.kg').value,reps:+r.querySelector('.reps').value,rir:+r.querySelector('.rir').value}));exercises.push({exercise:e.dataset.ex,rest:+e.querySelector('.rest').value,sets})});state.sessions.push({date:key(),routine:wr.value,exercises});persist();closeSheet()}
+function saveWorkout(){let exercises=[];document.querySelectorAll('#workbuild .exercise').forEach(e=>{let sets=[...e.querySelectorAll('.setrow')].map(r=>({kg:+r.querySelector('.kg').value,reps:+r.querySelector('.reps').value,rir:+r.querySelector('.rir').value}));exercises.push({exercise:e.dataset.ex,rest:+e.querySelector('.rest').value,sets})});state.sessions.push({id:'manual-'+Date.now(),source:'manual',date:key(),routine:wr.value,exercises});persist();closeSheet()}
+
+function findSessionIndex(id){
+ let sid=String(id??'');
+ let i=(state.sessions||[]).findIndex(x=>String(x.id??'')===sid);
+ if(i<0 && /^\d+$/.test(sid))i=+sid;
+ return i>=0&&state.sessions?.[i]?i:-1;
+}
+function sessionDetail(id){
+ let i=findSessionIndex(id); if(i<0)return;
+ let x=state.sessions[i],duration='';
+ if(x.start_time&&x.end_time){let mins=Math.max(0,Math.round((new Date(x.end_time)-new Date(x.start_time))/60000));if(Number.isFinite(mins))duration=` · ${mins} min`}
+ let ex=(x.exercises||[]).map(e=>{let sets=(e.sets||[]).map((st,j)=>`${j+1}. ${+st.kg||0} kg × ${+st.reps||0}${st.rpe!=null?' · RPE '+st.rpe:st.rir!=null?' · RIR '+st.rir:''}`).join('<br>');return `<div class="sessionExercise"><b>${e.exercise||'Ejercicio'}</b><div class="sessionSets">${sets||'Sin series registradas'}</div></div>`}).join('');
+ let co=x.checkout?`<div class="checkoutSaved"><b>Check-out guardado</b><div class="hint">${x.checkout.feeling||'—'} · dificultad ${x.checkout.difficulty||'—'}/5 · energía ${x.checkout.energy||'—'}/5${x.checkout.pain&&x.checkout.pain!=='Ninguna'?' · '+x.checkout.pain:''}</div>${x.checkout.note?`<div class="hint" style="margin-top:5px">${x.checkout.note}</div>`:''}</div>`:'';
+ open(`<h2>${x.routine||'Entrenamiento'}</h2><div class="hint">${x.date||''}${x.source==='hevy'?' · Hevy':''}${duration}</div>${co}<div style="margin-top:12px">${ex||'<div class="sub">Sin ejercicios.</div>'}</div><button class="primary" onclick="checkoutSheet(${i})">${x.checkout?'Editar check-out':'Hacer check-out'}</button>`);
+}
+function checkoutChoices(id,values,current){
+ return `<div class="checkoutGrid">${values.map(v=>`<button type="button" class="checkoutChoice ${String(current)===String(v)?'on':''}" data-check="${id}" data-value="${v}" onclick="selectCheckout('${id}',this)">${v}</button>`).join('')}</div>`;
+}
+function selectCheckout(id,btn){document.querySelectorAll(`[data-check="${id}"]`).forEach(x=>x.classList.remove('on'));btn.classList.add('on');let el=document.getElementById(id);if(el)el.value=btn.dataset.value}
+function checkoutSheet(index){
+ let x=state.sessions?.[index];if(!x)return;
+ let c=x.checkout||{};
+ open(`<h2>Check-out · ${x.routine||'Entrenamiento'}</h2><p class="hint">${x.date||''}${x.source==='hevy'?' · sincronizado desde Hevy':''}. Esto no modifica tus series: agrega contexto de recuperación y rendimiento.</p>
+ <label class="hint">Sensación general</label><input type="hidden" id="coFeeling" value="${c.feeling||''}">${checkoutChoices('coFeeling',['Excelente','Bien','Normal','Pesado','Malo'],c.feeling)}
+ <label class="hint">Dificultad percibida</label><input type="hidden" id="coDifficulty" value="${c.difficulty||''}">${checkoutChoices('coDifficulty',['1','2','3','4','5'],c.difficulty)}
+ <label class="hint">Energía</label><input type="hidden" id="coEnergy" value="${c.energy||''}">${checkoutChoices('coEnergy',['1','2','3','4','5'],c.energy)}
+ <label class="hint">Dolor o molestia</label><select id="coPain"><option ${!c.pain||c.pain==='Ninguna'?'selected':''}>Ninguna</option><option ${c.pain==='Leve'?'selected':''}>Leve</option><option ${c.pain==='Moderada'?'selected':''}>Moderada</option><option ${c.pain==='Alta'?'selected':''}>Alta</option></select>
+ <textarea id="coNote" placeholder="Comentario opcional: qué salió bien, qué costó, molestias...">${c.note||''}</textarea>
+ <button class="primary" onclick="saveCheckout(${index})">Guardar check-out</button>`);
+}
+function saveCheckout(index){
+ let x=state.sessions?.[index];if(!x)return;
+ let feeling=document.getElementById('coFeeling')?.value||'';
+ let difficulty=+(document.getElementById('coDifficulty')?.value||0);
+ let energy=+(document.getElementById('coEnergy')?.value||0);
+ if(!feeling||!difficulty||!energy){alert('Elegí sensación general, dificultad y energía antes de guardar.');return}
+ x.checkout={feeling,difficulty,energy,pain:document.getElementById('coPain')?.value||'Ninguna',note:document.getElementById('coNote')?.value.trim()||'',updatedAt:new Date().toISOString()};
+ persist();closeSheet();
+}
+
 function recipeSheet(i=null){
  let editing=Number.isInteger(i),x=editing?(state.recipes||[])[i]:null;
  open(`<h2>${editing?'Editar receta':'Nueva comida frecuente'}</h2>
@@ -279,7 +362,7 @@ function renderRoutine(){routineTabs.innerHTML=Object.keys(routines).map(x=>`<bu
 function totals(){let d=day(),t={kcal:0,p:0,c:0,f:0};Object.values(d.meals||{}).forEach(m=>['kcal','p','c','f'].forEach(k=>t[k]+=m[k]||0));return t}
 
 function ensureGoals(){state.goals=state.goals||{protein:140,sessions:5,weight:80,waist:85,steps:8000};if(!state.goals.steps)state.goals.steps=8000}
-function goalsSheet(){ensureGoals();open(`<h2>Objetivos BioChat</h2><div class="row"><input id="goalP" type="number" value="${state.goals.protein}" placeholder="Proteína g/día"><input id="goalS" type="number" value="${state.goals.sessions}" placeholder="Sesiones/sem"></div><div class="row"><input id="goalSt" type="number" value="${state.goals.steps}" placeholder="Pasos/día"><input id="goalWa" type="number" step=".1" value="${state.goals.waist}" placeholder="Cintura objetivo"></div><input id="goalW" type="number" step=".1" value="${state.goals.weight}" placeholder="Peso referencia"><p class="hint">No existe un “70% de recomposición”. BioChat muestra por separado los indicadores que sí podemos medir y su tendencia.</p><button class="primary" onclick="saveGoals()">Guardar objetivos</button>`)}
+function goalsSheet(){ensureGoals();open(`<h2>Objetivos Proyecto Thor</h2><div class="row"><input id="goalP" type="number" value="${state.goals.protein}" placeholder="Proteína g/día"><input id="goalS" type="number" value="${state.goals.sessions}" placeholder="Sesiones/sem"></div><div class="row"><input id="goalSt" type="number" value="${state.goals.steps}" placeholder="Pasos/día"><input id="goalWa" type="number" step=".1" value="${state.goals.waist}" placeholder="Cintura objetivo"></div><input id="goalW" type="number" step=".1" value="${state.goals.weight}" placeholder="Peso referencia"><p class="hint">No existe un “70% de recomposición”. Proyecto Thor muestra por separado los indicadores que sí podemos medir y su tendencia.</p><button class="primary" onclick="saveGoals()">Guardar objetivos</button>`)}
 function saveGoals(){state.goals={protein:+goalP.value,sessions:+goalS.value,steps:+goalSt.value||8000,weight:+goalW.value,waist:+goalWa.value};persist();closeSheet()}
 let calendarCursor=new Date();
 function changeMonth(n){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+n,1);renderCalendar()}
@@ -293,7 +376,7 @@ function renderCalendar(){
   const ss=Array.isArray(state.sessions)?state.sessions:[], rh=Array.isArray(state.recoveryHistory)?state.recoveryHistory:[], bb=Array.isArray(state.body)?state.body:[], aa=Array.isArray(state.activities)?state.activities:[];
   for(let d=1;d<=last.getDate();d++){let z=n=>String(n).padStart(2,'0'),k=`${y}-${z(m+1)}-${z(d)}`,has=!!(state.days||{})[k]||ss.some(x=>x&&x.date===k)||rh.some(x=>x&&x.date===k)||bb.some(x=>x&&x.date===k)||aa.some(x=>x&&x.date===k)||!!(state.dailyActivity||{})[k];cells+=`<button class="calday ${has?'has':''} ${k===key()?'today':''}" onclick="openDay('${k}')">${d}</button>`}
   cal.innerHTML=heads+cells;
- }catch(e){console.error('BioChat calendar',e);const cal=document.getElementById('calendar');if(cal)cal.innerHTML='<div class="sub">No se pudo mostrar el calendario. Tus datos siguen guardados.</div>'}
+ }catch(e){console.error('Proyecto Thor calendar',e);const cal=document.getElementById('calendar');if(cal)cal.innerHTML='<div class="sub">No se pudo mostrar el calendario. Tus datos siguen guardados.</div>'}
 }
 function showDayTab(id,btn){document.querySelectorAll('.dayPane').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.dayTab').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');btn.classList.add('on')}
 function openDay(k){let d=state.days[k]||{meals:{}},meals=Object.entries(d.meals||{}),sess=state.sessions.filter(x=>x.date===k),acts=(state.activities||[]).filter(x=>x.date===k),rec=(state.recoveryHistory||[]).find(x=>x.date===k)||{},body=state.body.find(x=>x.date===k),da=(state.dailyActivity||{})[k]||{},ah=state.appleHealth?.days?.[k]||{};
@@ -390,13 +473,36 @@ function fmtDelta(a,b,unit=''){if(a==null||b==null)return '—';let d=a-b;return
 function bestSets(){
  let map={};state.sessions.forEach(sess=>(sess.exercises||[]).forEach(ex=>(ex.sets||[]).forEach(st=>{if(!st.kg||!st.reps)return;let score=st.kg*(1+st.reps/30);if(!map[ex.exercise]||score>map[ex.exercise].score)map[ex.exercise]={...st,score,date:sess.date}})));return map
 }
-const muscleMap={'Press banca':'Pecho','Press inclinado mancuernas':'Pecho','Press inclinado':'Pecho','Press inclinado manc.':'Pecho','Remo sentado':'Espalda','Jalón al pecho':'Espalda','Dominadas lastradas':'Espalda','Remo T':'Espalda','Jalón unilateral':'Espalda','Elevación lateral máquina':'Deltoides','Elevación lateral cable':'Deltoides','Reverse pec deck':'Deltoides','Curl bayesiano':'Bíceps','Curl Scott':'Bíceps','Tríceps cuerda':'Tríceps','Tríceps sobre cabeza':'Tríceps','Sentadilla':'Cuádriceps','Prensa 45°':'Cuádriceps','Hack squat':'Cuádriceps','Extensión cuádriceps':'Cuádriceps','Curl femoral':'Isquios','Hip thrust':'Glúteos','Gemelo de pie':'Gemelos','Gemelo sentado':'Gemelos','Crunch cable':'Core','Pallof press':'Core','Elevación de piernas':'Core'};
+function normalizeExerciseName(v=''){return String(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[()/_-]/g,' ').replace(/\s+/g,' ').trim()}
+function exerciseMuscle(name=''){
+ const n=normalizeExerciseName(name);
+ const rules=[
+  ['Pecho',/(bench press|chest press|press banca|incline.*press|press inclinado|pec deck|chest fly|aperturas|fly.*chest)/],
+  ['Espalda',/(lat pulldown|pulldown|pull up|pullup|chin up|dominad|seated.*row|cable row|t bar row|t-bar row|remo|jalon|straight arm pulldown)/],
+  ['Hombros',/(lateral raise|elevacion lateral|shoulder press|military press|press militar|rear delt|reverse pec deck|face pull|deltoid)/],
+  ['Bíceps',/(curl(?!.*leg)|biceps|bayesian|bayesiano|preacher|scott)/],
+  ['Tríceps',/(tricep|triceps|pushdown|push down|skull crusher|overhead.*extension|fondos|dip)/],
+  ['Cuádriceps',/(squat|sentadilla|leg press|prensa|hack squat|leg extension|extension.*quad|cuadriceps)/],
+  ['Femoral',/(leg curl|hamstring|femoral|romanian deadlift|rdl|peso muerto rumano)/],
+  ['Glúteos',/(hip thrust|glute|gluteo|abductor)/],
+  ['Gemelos',/(calf|gemelo|pantorrilla)/],
+  ['Core',/(crunch|pallof|leg raise|elevacion de piernas|abdominal|plank|plancha|core)/]
+ ];
+ for(const [m,re] of rules)if(re.test(n))return m;
+ return 'Otros';
+}
 function muscleSets(){
- let out={};state.sessions.slice(-8).forEach(sess=>(sess.exercises||[]).forEach(ex=>{let m=muscleMap[ex.exercise]||'Otros';let n=(ex.sets||[]).filter(x=>x.reps>0).length;out[m]=(out[m]||0)+n}));return out
+ let out={};
+ (state.sessions||[]).slice(-8).forEach(sess=>(sess.exercises||[]).forEach(ex=>{
+   let m=exerciseMuscle(ex.exercise||ex.title||'');
+   let n=(ex.sets||[]).filter(x=>(+x.reps||0)>0 || (+x.duration_seconds||0)>0).length;
+   if(n)out[m]=(out[m]||0)+n;
+ }));
+ return out;
 }
 function intelligence(){
  let w=weekStats(0),prev=weekStats(-1),lines=[];
- if(w.p) lines.push(w.p>=(state.goals?.protein||140)?`Proteína media ${Math.round(w.p)} g/día: dentro del rango práctico de BioChat.`:`Proteína media ${Math.round(w.p)} g/día: priorizá proteína en las comidas más flojas.`);
+ if(w.p) lines.push(w.p>=(state.goals?.protein||140)?`Proteína media ${Math.round(w.p)} g/día: dentro del rango práctico de Proyecto Thor.`:`Proteína media ${Math.round(w.p)} g/día: priorizá proteína en las comidas más flojas.`);
  if(w.sessions||prev.sessions) lines.push(`Entrenamientos: ${w.sessions} esta semana vs ${prev.sessions} la anterior.`);
  if(w.hrv&&prev.hrv) lines.push(`HRV media: ${w.hrv.toFixed(0)} ms (${fmtDelta(w.hrv,prev.hrv,' ms')} vs semana anterior). Miramos tendencia, no un día aislado.`);
  let bs=state.body.slice(-2);if(bs.length===2&&bs[1].waist&&bs[0].waist)lines.push(`Cintura: ${bs[1].waist} cm (${fmtDelta(bs[1].waist,bs[0].waist,' cm')} desde el control anterior).`);
@@ -432,7 +538,7 @@ function render(){
  let ws=weekStats(0),ps=weekStats(-1);compare.innerHTML=`<div class="listrow"><span>Sesiones</span><b>${ws.sessions} vs ${ps.sessions}</b></div><div class="listrow"><span>Proteína media</span><b>${ws.p?Math.round(ws.p)+' g':'—'} ${ws.p&&ps.p?'('+fmtDelta(ws.p,ps.p,' g')+')':''}</b></div><div class="listrow"><span>HRV media</span><b>${ws.hrv?Math.round(ws.hrv)+' ms':'—'} ${ws.hrv&&ps.hrv?'('+fmtDelta(ws.hrv,ps.hrv,' ms')+')':''}</b></div><div class="listrow"><span>HybridCharge medio</span><b>${ws.hybrid?Math.round(ws.hybrid):'—'}</b></div>`;
  sessions.innerHTML=state.sessions.length?state.sessions.slice(-20).reverse().map(x=>{let idx=state.sessions.indexOf(x);return `<div class="listrow"><div class="clickable" onclick="sessionDetail('${x.id||''}')"><b>${x.routine}</b><div class="hint">${x.date}${x.source==='hevy'?' · Hevy':''}</div></div>${x.checkout?`<button class="secondary done" onclick="checkoutSheet(${idx})">✓ Realizado</button>`:`<button class="secondary" onclick="checkoutSheet(${idx})">Check-out</button>`}</div>`}).join(''):'<div class="sub">Todavía no hay sesiones guardadas.</div>';activities.innerHTML=(state.activities||[]).length?(state.activities||[]).slice(-6).reverse().map(a=>`<div class="listrow"><div><b>${a.type}</b><div class="hint">${a.date} · ${a.duration||0} min${a.distance?' · '+a.distance+' km':''}</div></div><span class="pill">${a.intensity||''}</span></div>`).join(''):'<div class="sub">Padel, running, caminatas y otras actividades aparecerán acá.</div>';if(state.hevy?.lastSync&&document.getElementById('hevyStatus'))document.getElementById('hevyStatus').textContent='Última sincronización: '+new Date(state.hevy.lastSync).toLocaleString('es-AR');if(state.appleHealth?.lastImport&&document.getElementById('appleHealthStatus'))document.getElementById('appleHealthStatus').textContent='Última importación: '+new Date(state.appleHealth.lastImport).toLocaleString('es-AR')+' · '+(state.appleHealth.records||0).toLocaleString('es-AR')+' registros.';
  favorites.innerHTML=(Array.isArray(state.recipes)?state.recipes:[]).map((x,i)=>({x,i})).filter(o=>o.x&&o.x.name).map(({x,i})=>`<div class="listrow"><div><b>${x.name}</b><div class="hint">${Math.round(Number(x.kcal)||0)} kcal · ${Math.round(Number(x.p)||0)} g proteína${(x.aliases||[]).length?' · '+x.aliases.join(', '):''}</div></div><div class="mealActions"><button class="secondary" onclick="quickRecipe(${i})">Agregar</button><button class="iconbtn" onclick="recipeSheet(${i})">Editar</button></div></div>`).join('')||'<div class="sub">Todavía no hay recetas guardadas.</div>';
- let sf=(Array.isArray(state.savedFoods)?state.savedFoods:[]).filter(x=>x&&x.name);savedFoods.innerHTML=sf.length?sf.map((x,i)=>`<div class="listrow"><div><b>${x.name}</b><div class="hint">${x.portion||'porción'} · ${Math.round(Number(x.kcal)||0)} kcal · ${Math.round(Number(x.p)||0)} g prot.</div></div><button class="secondary" onclick="foodSheet(${i})">Editar</button></div>`).join(''):'<div class="sub">Guardá productos que repetís y BioChat dejará de estimarlos.</div>'; nutritionBalance.innerHTML=nutritionRead(t);
+ let sf=(Array.isArray(state.savedFoods)?state.savedFoods:[]).filter(x=>x&&x.name);savedFoods.innerHTML=sf.length?sf.map((x,i)=>`<div class="listrow"><div><b>${x.name}</b><div class="hint">${x.portion||'porción'} · ${Math.round(Number(x.kcal)||0)} kcal · ${Math.round(Number(x.p)||0)} g prot.</div></div><button class="secondary" onclick="foodSheet(${i})">Editar</button></div>`).join(''):'<div class="sub">Guardá productos que repetís y Proyecto Thor dejará de estimarlos.</div>'; nutritionBalance.innerHTML=nutritionRead(t);
  let hist=Object.entries(state.days).slice(-7).reverse();foodHistory.innerHTML=hist.length?hist.map(([date,d])=>{let tt={kcal:0,p:0},entries=Object.values(d.meals||{}),known=entries.some(m=>(m.nutritionKnown!==false)&&((m.kcal||m.p||m.c||m.f)>0));entries.forEach(m=>{tt.kcal+=m.kcal||0;tt.p+=m.p||0});return `<div class="listrow"><div><b>${date}</b><div class="hint">${entries.length} registros</div></div><div style="text-align:right"><b>${known?Math.round(tt.kcal)+' kcal':'Sin datos nutricionales'}</b><div class="hint">${known?Math.round(tt.p)+' g prot.':'registrado sin macros'}</div></div></div>`}).join(''):'<div class="sub">El historial aparecerá a medida que cargues días.</div>';
  insight.innerHTML=nutritionRead(t);
  ensureGoals();
@@ -454,7 +560,7 @@ async function savePhoto(view,file){if(!file)return;let db=photoDB||await openPh
 async function renderProgressPhotos(date=key()){try{let rows=await photoAll(),found={};rows.forEach(p=>{if(p&&p.date===date&&p.view&&p.file)found[p.view]=p});for(const view of Object.keys(PHOTO_VIEWS)){let box=document.getElementById('photoBox-'+view),empty=document.getElementById('photoEmpty-'+view);if(!box)continue;box.querySelectorAll('img,.photoLabel').forEach(x=>x.remove());box.classList.toggle('hasPhoto',!!found[view]);if(empty)empty.style.display=found[view]?'none':'';box.onclick=null;if(found[view]){let url=URL.createObjectURL(found[view].file),img=document.createElement('img'),lab=document.createElement('span');img.src=url;img.alt=PHOTO_VIEWS[view]+' '+date;img.onload=()=>URL.revokeObjectURL(url);lab.className='photoLabel';lab.textContent=PHOTO_VIEWS[view];box.insertBefore(img,box.firstChild);box.appendChild(lab);box.onclick=e=>{if(e.target.tagName!=='INPUT')openPhotoViewer(found[view])}}else box.onclick=e=>{if(e.target.tagName!=='INPUT')document.getElementById('photoInput-'+view)?.click()}}let ps=document.getElementById('photoStatus'),n=Object.keys(found).length;if(ps)ps.textContent=n?`${n}/3 fotos cargadas para ${date}. Tocá una foto para verla o reemplazarla.`:'Las fotos quedan guardadas localmente en este dispositivo y no se envían a un servidor.'}catch(e){console.error('Proyecto Thor photos',e);let ps=document.getElementById('photoStatus');if(ps)ps.textContent='No se pudieron leer las fotos guardadas en este dispositivo.'}}
 function openPhotoViewer(p){let url=URL.createObjectURL(p.file),wrap=document.createElement('div');wrap.className='photoViewer';wrap.innerHTML=`<img alt="${PHOTO_VIEWS[p.view]}"><div class="photoViewerActions"><button class="secondary" id="photoReplace">Reemplazar</button><button class="secondary" id="photoClose">Cerrar</button></div>`;wrap.querySelector('img').src=url;document.body.appendChild(wrap);let close=()=>{URL.revokeObjectURL(url);wrap.remove()};wrap.querySelector('#photoClose').onclick=close;wrap.querySelector('#photoReplace').onclick=()=>{let input=document.getElementById('photoInput-'+p.view);close();input?.click()};wrap.onclick=e=>{if(e.target===wrap)close()}}
 openPhotoDB().then(()=>renderProgressPhotos()).catch(()=>{});
-try{render()}catch(e){console.error('Proyecto Thor render',e)};renderProgressPhotos();pullCloud();window.addEventListener('focus',pullCloud);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloud()});if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js?v=200',{updateViaCache:'none'}).then(reg=>{reg.update();setInterval(()=>reg.update(),15*60*1000)});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r&&r.update())})}
+try{render()}catch(e){console.error('Proyecto Thor render',e)};renderProgressPhotos();pullCloud();window.addEventListener('focus',pullCloud);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pullCloud()});if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js?v=220',{updateViaCache:'none'}).then(reg=>{reg.update();setInterval(()=>reg.update(),15*60*1000)});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration().then(r=>r&&r.update())})}
 </script><script type="module">
 // El modelo propone un plato entero; el usuario confirma ingredientes y porciones.
 const choices=[
@@ -504,7 +610,7 @@ function renderItems(){let root=byId('photoMealItems');if(!root)return;root.inne
 function totals(){let t={kcal:0,p:0,c:0,f:0};for(const x of items){let r=choices[x.index],factor=(Number(x.grams)||0)/r[3];for(let k=0;k<4;k++)t[['kcal','p','c','f'][k]]+=r[4+k]*factor}return t}
 function updateTotals(){let t=totals();byId('photoMealTotals').textContent=items.length?`Aproximado: ${Math.round(t.kcal)} kcal · ${Math.round(t.p)} g proteína · ${Math.round(t.c)} g carbos · ${Math.round(t.f)} g grasas`:'Agregá y ajustá los alimentos que comiste.'}
 window.photoMeal=function(type){meal=type;items=[];clearImage();const html=`<h2>📷 ${escapeHtml(type)}</h2><p class="hint">Elegí cámara o galería. El análisis propone un alimento; agregá lo demás y corregí los gramos antes de guardar.</p><div class="row"><button class="secondary" type="button" id="photoMealCameraButton">Cámara</button><button class="secondary" type="button" id="photoMealGalleryButton">Galería</button></div><input id="photoMealCamera" type="file" accept="image/*" capture="environment" hidden><input id="photoMealGallery" type="file" accept="image/*" hidden><img id="photoMealPreview" alt="Foto de comida" hidden style="width:100%;max-height:260px;object-fit:contain;border-radius:12px;margin-top:10px"><button id="photoMealAnalyze" class="primary" type="button" disabled>Reconocer alimento</button><p id="photoMealStatus" class="hint" role="status" aria-live="polite">Elegí una foto para empezar.</p><div id="photoMealSuggestions"></div><label class="hint" for="photoMealAdd">Agregar alimento o bebida</label><select id="photoMealAdd"><option value="">Seleccionar…</option>${choices.map((x,i)=>`<option value="${i}">${escapeHtml(x[0])}</option>`).join('')}</select><div id="photoMealItems"></div><b id="photoMealTotals"></b><p class="hint">Las porciones y los valores son referencias aproximadas. La foto por sí sola no mide gramos ni reconoce todos los ingredientes.</p><button id="photoMealSave" class="primary" type="button">Revisar y guardar comida</button>`;
- window.open(html);
+ document.getElementById('panel').innerHTML=html;document.getElementById('sheet').classList.add('on');
  for(const [btn,input] of [['photoMealCameraButton','photoMealCamera'],['photoMealGalleryButton','photoMealGallery']])byId(btn).onclick=()=>byId(input).click();
  for(const id of ['photoMealCamera','photoMealGallery'])byId(id).onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!f.type.startsWith('image/')){setStatus('El archivo no es una imagen.');return}clearImage();file=f;url=URL.createObjectURL(f);byId('photoMealPreview').src=url;byId('photoMealPreview').hidden=false;byId('photoMealAnalyze').disabled=false;byId('photoMealSuggestions').replaceChildren();setStatus('Foto recibida. Tocá Reconocer alimento. La primera vez se descargará el modelo y puede tardar.');};
  byId('photoMealAnalyze').onclick=analyze;
@@ -545,7 +651,7 @@ async function analyze(){if(!file)return;let button=byId('photoMealAnalyze');but
 function save(){if(!items.length){setStatus('Agregá al menos un alimento antes de guardar.');return}if(items.some(x=>!Number.isFinite(x.grams)||x.grams<=0||x.grams>3000)){setStatus('Revisá los gramos de cada alimento.');return}
  const values=totals(),description=items.map(x=>`${choices[x.index][0]} ${Math.round(x.grams)} g`).join(' + ');
  // Usar el formulario existente: conserva su lógica y permite revisar números antes de persistir.
- const current=window.day().meals[meal];window.mealSheet(meal,current?meal:null);
+ const current=day().meals[meal];mealSheet(meal,current?meal:null);
  byId('food').value=description;
  for(const [id,v] of [['mk',values.kcal],['mp',values.p],['mc',values.c],['mf',values.f]])byId(id).value=Math.round(v*10)/10;
  clearImage();
