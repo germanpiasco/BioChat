@@ -2,7 +2,7 @@
   "name": "Proyecto Thor",
   "short_name": "Thor",
   "id": "/BioChat/",
-  "start_url": "./?app=210",
+  "start_url": "./?app=220",
   "scope": "./",
   "display": "standalone",
   "background_color": "#09090b",
