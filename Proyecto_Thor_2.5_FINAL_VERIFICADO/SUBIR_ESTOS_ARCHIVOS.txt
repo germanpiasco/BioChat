@@ -1,6 +1,0 @@
-PROYECTO THOR 2.5
-Subí TODO el contenido de este ZIP directamente a la raíz de germanpiasco/BioChat.
-No crees carpetas assets ni icons.
-Reemplazá index.html, manifest.json y sw.js y subí también todas las imágenes/iconos.
-Luego abrí ?app=250.
-En Más > Conexión Hevy, volvé a pegar BIOCHAT_TOKEN una sola vez: esta versión primero recupera Cloudflare y después sincroniza Hevy.
